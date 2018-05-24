@@ -39,6 +39,7 @@ import java.awt.image.ImageConsumer;
 import java.io.File;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -613,9 +614,9 @@ public class Renderer {
 			// https://services.runescape.com/m=news/runescape-classic-farewell?oldschool=1
 			Calendar closeDate = new GregorianCalendar();
 			closeDate.setTimeZone(TimeZone.getTimeZone("BST"));
-			closeDate.set(2018, 8, 6, 8, 0, 0);
-			Date currentDate = new Date();
-			int daysRemaining = Util.daysBetween(currentDate, closeDate.getTime());
+			closeDate.set(2018, 7, 6, 8, 0, 0);
+			Date currentDate = Calendar.getInstance().getTime();
+			long daysRemaining = ChronoUnit.DAYS.between(currentDate.toInstant(), closeDate.getTime().toInstant());
 			String daysString;
 			if (daysRemaining == 0) {
 				daysString = "RuneScape Classic will be taken offline today";
