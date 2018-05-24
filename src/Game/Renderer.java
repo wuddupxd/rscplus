@@ -39,7 +39,6 @@ import java.awt.image.ImageConsumer;
 import java.io.File;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -616,12 +615,13 @@ public class Renderer {
 			closeDate.setTimeZone(TimeZone.getTimeZone("BST"));
 			closeDate.set(2018, 7, 6, 8, 0, 0);
 			Date currentDate = Calendar.getInstance().getTime();
-			long daysRemaining = ChronoUnit.DAYS.between(currentDate.toInstant(), closeDate.getTime().toInstant());
+			long timeRemaining = (closeDate.getTime().getTime() - 1000) - currentDate.getTime();
+			long daysRemaining = timeRemaining / (1000 * 60 * 60 * 24);
 			String daysString;
-			if (daysRemaining == 0) {
-				daysString = "RuneScape Classic will be taken offline today";
-			} else if (daysRemaining < 0) {
+			if (timeRemaining < 0) {
 				daysString = "RuneScape Classic has been taken offline";
+			} else if (timeRemaining < (1000 * 60 * 60 * 24)) {
+				daysString = "RuneScape Classic will be taken offline today";
 			} else {
 				daysString = "RuneScape Classic will be taken offline in " + (daysRemaining == 1 ? "1 day" : (daysRemaining + " days"));
 			}
