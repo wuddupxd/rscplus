@@ -75,11 +75,13 @@ public class Game extends JFrame implements AppletStub, ComponentListener, Windo
 		// Set window properties
 		setResizable(true);
 		addWindowListener(this);
+		setMinimumSize(new Dimension(1, 1));
 		
 		// Add applet to window
 		setContentPane(m_applet);
 		getContentPane().setBackground(Color.BLACK);
 		getContentPane().setPreferredSize(new Dimension(512, 346));
+		addComponentListener(this);
 		pack();
 		
 		// Hide cursor if software cursor
@@ -88,9 +90,6 @@ public class Game extends JFrame implements AppletStub, ComponentListener, Windo
 		// Position window and make it visible
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
-		setMinimumSize(new Dimension(1, 1));
-		addComponentListener(this);
 		
 		Reflection.Load();
 		Renderer.init();
