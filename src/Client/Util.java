@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.zip.CRC32;
 
@@ -49,6 +50,16 @@ public class Util {
 	
 	private Util() {
 		// Empty private constructor to prevent instantiation.
+	}
+	
+	/**
+	 * Gets the amount of days between 2 dates
+	 * 
+	 * @param d1 Start date
+	 * @return CRC32 of the file data
+	 */
+	public static int daysBetween(Date start, Date end) {
+		return (int)ChronoUnit.DAYS.between(start.toInstant(), end.toInstant());
 	}
 	
 	/**
