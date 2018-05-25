@@ -188,7 +188,6 @@ public class Renderer {
 				Game.getInstance().pack();
 				Game.getInstance().setLocationRelativeTo(null);
 			}
-			Game.getInstance().setVisible(true);
 			macOS_resize_workaround = false;
 		}
 		
