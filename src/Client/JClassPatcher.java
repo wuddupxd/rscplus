@@ -1023,6 +1023,23 @@ public class JClassPatcher {
 				}
 				
 				methodNode.instructions.insertBefore(findNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "login_hook", "()V", false));
+			} else if (methodNode.name.equals("a") && methodNode.desc.equals("(ZI)V")) {
+				// Disconnect hook (::closecon)
+				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+				
+				while (insnNodeList.hasNext()) {
+					AbstractInsnNode insnNode = insnNodeList.next();
+					AbstractInsnNode nextNode = insnNode.getNext();
+					
+					if (nextNode == null)
+						break;
+					
+					if (insnNode.getOpcode() == Opcodes.SIPUSH && ((IntInsnNode)insnNode).operand == -6924 && nextNode.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						// entry point when its true to close it
+						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "disconnect_hook", "()V", false));
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -1166,8 +1183,7 @@ public class JClassPatcher {
 					methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/GameApplet", "cacheURLHook", "(Ljava/net/URL;)Ljava/net/URL;"));
 					methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ASTORE, 0));
 				} else if (methodNode.desc.equals("(Z)V")) {
-					// Disconnect hook
-					// TODO: Is this our logout?
+					// Disconnect hook (::lostcon)
 					Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
 					AbstractInsnNode insnNode = insnNodeList.next();
 					methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "disconnect_hook", "()V", false));

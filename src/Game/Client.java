@@ -344,12 +344,13 @@ public class Client {
 	}
 	
 	public static void login_hook() {
-		// Replay.initializeReplayRecording();
-		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-25-2018 12.23.34");
+		Replay.initializeReplayRecording();
+		// Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/playername/05-25-2018 14.36.58");
 	}
 	
 	public static void disconnect_hook() {
-		// Replay.closeReplayRecording();
+		// ::lostcon or closeConnection
+		Replay.closeReplayRecording();
 	}
 	
 	/**
