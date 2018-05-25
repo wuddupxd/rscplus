@@ -37,6 +37,7 @@ import Client.Launcher;
 import Client.NotificationsHandler;
 import Client.Settings;
 import Client.TrayHandler;
+import Client.Util;
 
 /**
  * Singleton class that handles packaging the client into a JFrame and starting the applet.
@@ -214,6 +215,12 @@ public class Game extends JFrame implements AppletStub, ComponentListener, Windo
 		if (getMinimumSize().width == 1) {
 			setMinimumSize(getSize());
 			launchGame();
+			
+			// This workaround appears to be for a bug in the macOS JVM
+			// Without it, mac users get very angry
+			if (Util.isMacOS()) {
+				setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+			}
 		}
 		
 		Renderer.resize(getContentPane().getWidth(), getContentPane().getHeight());
