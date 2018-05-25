@@ -95,7 +95,7 @@ public class Game extends JFrame implements AppletStub, ComponentListener, Windo
 		Reflection.Load();
 		Renderer.init();
 		
-		if (Settings.CUSTOM_CLIENT_SIZE) {
+		if (!Util.isMacOS() && Settings.CUSTOM_CLIENT_SIZE) {
 			Game.getInstance().resizeFrameWithContents();
 		}
 	}
