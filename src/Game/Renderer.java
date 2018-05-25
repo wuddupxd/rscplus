@@ -102,6 +102,8 @@ public class Renderer {
 	
 	public static String[] shellStrings;
 	
+	private static boolean macOS_resize_workaround = Util.isMacOS();
+	
 	public static void init() {
 		// patch copyright to match current year
 		shellStrings[23] = shellStrings[23].replaceAll("2015", Integer.toString(Calendar.getInstance().get(Calendar.YEAR)));
@@ -177,6 +179,12 @@ public class Renderer {
 		delta_time = (float)(new_time - time) / 1000.0f;
 		time = new_time;
 		alpha_time = 0.25f + (((float)Math.sin(time / 100) + 1.0f) / 2.0f * 0.75f);
+		
+		// This workaround is required to use custom resolution on macOS
+		if (macOS_resize_workaround && Settings.CUSTOM_CLIENT_SIZE) {
+			Game.getInstance().resizeFrameWithContents();
+			macOS_resize_workaround = false;
+		}
 		
 		// Run other parts update methods
 		Client.update();
