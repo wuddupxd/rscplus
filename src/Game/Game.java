@@ -219,8 +219,8 @@ public class Game extends JFrame implements AppletStub, ComponentListener, Windo
 			// This workaround appears to be for a bug in the macOS JVM
 			// Without it, mac users get very angry
 			if (Util.isMacOS()) {
+				setVisible(false);
 				setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-				setLocationRelativeTo(null);
 			}
 		}
 		
