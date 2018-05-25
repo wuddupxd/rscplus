@@ -130,6 +130,13 @@ public class JConfig {
 	 * @param world The desired world to log into
 	 */
 	public void changeWorld(int world) {
+		if (world == 6) {
+			// Replay playback "world"
+			m_data.put("codebase", "http://127.0.0.1/");
+			Game.getInstance().setTitle("Replay");
+			return;
+		}
+		
 		// Clip world to 1 - 5
 		if (world > 5)
 			world = 5;
@@ -141,6 +148,7 @@ public class JConfig {
 			parameters.put("servertype", "" + 3);
 		else
 			parameters.put("servertype", "" + 1);
+		
 		m_data.put("codebase", "http://classic" + world + ".runescape.com/");
 		
 		// Update settings

@@ -21,8 +21,10 @@
 
 package Game;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +36,30 @@ public class Replay {
 	static DataOutputStream output = null;
 	static DataOutputStream input = null;
 	static DataOutputStream keys = null;
+	
+	static DataInputStream play_keys = null;
+	
+	public static void initializeReplayPlayback(String replayDirectory) {
+		try {
+			play_keys = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin")));
+		} catch (Exception e) {
+			play_keys = null;
+			Logger.Error("Failed to initialize replay playback");
+		}
+		Game.getInstance().getJConfig().changeWorld(6);
+		new Thread(new ReplayServer(replayDirectory)).start();
+		Logger.Info("Replay playback started");
+	}
+	
+	public static void closeReplayPlayback() {
+		try {
+			play_keys.close();
+		} catch (Exception e) {
+		}
+		
+		Game.getInstance().getJConfig().changeWorld(Settings.WORLD);
+		Logger.Info("Replay playback stopped");
+	}
 	
 	public static void initializeReplayRecording() {
 		// No username specified, exit
@@ -104,13 +130,23 @@ public class Replay {
 		}
 	}
 	
-	public static void dumpXTEAKey(int key) {
+	public static int hookXTEAKey(int key) {
+		if (play_keys != null) {
+			try {
+				return play_keys.readInt();
+			} catch (Exception e) {
+				return key;
+			}
+		}
+		
 		if (keys == null)
-			return;
+			return key;
 		
 		try {
 			keys.writeInt(key); // data length
 		} catch (Exception e) {
 		}
+		
+		return key;
 	}
 }

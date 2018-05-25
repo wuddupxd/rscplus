@@ -352,8 +352,7 @@ public class JClassPatcher {
 					
 					// Dump login xtea keys
 					if (xteaIndex < 4 && insnNode.getOpcode() == Opcodes.IASTORE) {
-						methodNode.instructions.insertBefore(insnNode, new InsnNode(Opcodes.DUP));
-						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "dumpXTEAKey", "(I)V", false));
+						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "hookXTEAKey", "(I)I", false));
 						xteaIndex++;
 					}
 				}

@@ -344,11 +344,12 @@ public class Client {
 	}
 	
 	public static void login_hook() {
-		Replay.initializeReplayRecording();
+		// Replay.initializeReplayRecording();
+		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-25-2018 12.23.34");
 	}
 	
 	public static void disconnect_hook() {
-		Replay.closeReplayRecording();
+		// Replay.closeReplayRecording();
 	}
 	
 	/**
