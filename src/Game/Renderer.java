@@ -181,8 +181,13 @@ public class Renderer {
 		alpha_time = 0.25f + (((float)Math.sin(time / 100) + 1.0f) / 2.0f * 0.75f);
 		
 		// This workaround is required to use custom resolution on macOS
-		if (macOS_resize_workaround && Settings.CUSTOM_CLIENT_SIZE) {
-			Game.getInstance().resizeFrameWithContents();
+		if (macOS_resize_workaround) {
+			if (Settings.CUSTOM_CLIENT_SIZE) {
+				Game.getInstance().resizeFrameWithContents();
+			} else {
+				Game.getInstance().pack();
+				Game.getInstance().setLocationRelativeTo(null);
+			}
 			macOS_resize_workaround = false;
 		}
 		

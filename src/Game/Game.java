@@ -253,6 +253,7 @@ public class Game extends JFrame implements AppletStub, ComponentListener, Windo
 		int windowWidth = Settings.CUSTOM_CLIENT_SIZE_X + getInsets().left + getInsets().right;
 		int windowHeight = Settings.CUSTOM_CLIENT_SIZE_Y + getInsets().top + getInsets().bottom;
 		setSize(windowWidth, windowHeight);
+		setLocationRelativeTo(null);
 	}
 	
 }
