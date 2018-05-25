@@ -344,6 +344,19 @@ public class JClassPatcher {
 						}
 					}
 				}
+			} else if (methodNode.name.equals("a") && methodNode.desc.equals("(ILjava/lang/String;Ljava/lang/String;Z)V")) {
+				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+				int xteaIndex = 0;
+				while (insnNodeList.hasNext()) {
+					AbstractInsnNode insnNode = insnNodeList.next();
+					
+					// Dump login xtea keys
+					if (xteaIndex < 4 && insnNode.getOpcode() == Opcodes.IASTORE) {
+						methodNode.instructions.insertBefore(insnNode, new InsnNode(Opcodes.DUP));
+						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "dumpXTEAKey", "(I)V", false));
+						xteaIndex++;
+					}
+				}
 			} else if (methodNode.name.equals("J") && methodNode.desc.equals("(I)V")) {
 				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
 				while (insnNodeList.hasNext()) {
@@ -993,6 +1006,24 @@ public class JClassPatcher {
 						continue;
 					}
 				}
+			} else if (methodNode.name.equals("x") && methodNode.desc.equals("(I)V")) {
+				// Login button press hook
+				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+				
+				AbstractInsnNode findNode = null;
+				int count = 0;
+				while (insnNodeList.hasNext()) {
+					AbstractInsnNode insnNode = insnNodeList.next();
+					if (insnNode.getOpcode() == Opcodes.PUTFIELD) {
+						FieldInsnNode field = (FieldInsnNode)insnNode;
+						if (count != 1 && field.owner.equals("client") && field.name.equals("wh") && field.desc.equals("Ljava/lang/String;")) {
+							findNode = insnNode.getNext();
+							count++;
+						}
+					}
+				}
+				
+				methodNode.instructions.insertBefore(findNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "login_hook", "()V", false));
 			}
 		}
 	}
@@ -1135,6 +1166,53 @@ public class JClassPatcher {
 					methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ALOAD, 0));
 					methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/GameApplet", "cacheURLHook", "(Ljava/net/URL;)Ljava/net/URL;"));
 					methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ASTORE, 0));
+				} else if (methodNode.desc.equals("(Z)V")) {
+					// Disconnect hook
+					// TODO: Is this our logout?
+					Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+					AbstractInsnNode insnNode = insnNodeList.next();
+					methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "disconnect_hook", "()V", false));
+				} else if (methodNode.desc.equals("([BIII)V")) {
+					// dump whole input stream!
+					Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+					while (insnNodeList.hasNext()) {
+						AbstractInsnNode insnNode = insnNodeList.next();
+						AbstractInsnNode nextNode = insnNode.getNext();
+						
+						// entry point
+						if (insnNode.getOpcode() == Opcodes.ILOAD && ((VarInsnNode)insnNode).var == 5 && nextNode.getOpcode() == Opcodes.ILOAD
+								&& ((VarInsnNode)nextNode).var == 7) {
+							VarInsnNode call = (VarInsnNode)insnNode;
+							methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ALOAD, 1)); // byte[]
+							methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ILOAD, 2)); // n
+							methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ILOAD, 3)); // n2
+							// methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ILOAD, 4)); // n3
+							// methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ILOAD, 6)); // n4
+							methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ILOAD, 5)); // n5
+							methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ILOAD, 7)); // bytes read
+							methodNode.instructions.insertBefore(call, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "dumpRawInputStream", "([BIIII)V"));
+							break;
+						}
+					}
+				}
+			} else if (methodNode.name.equals("run")) {
+				
+				// dump whole output stream!
+				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+				while (insnNodeList.hasNext()) {
+					AbstractInsnNode insnNode = insnNodeList.next();
+					AbstractInsnNode nextNode = insnNode.getNext();
+					
+					// entry point
+					if (insnNode.getOpcode() == Opcodes.ALOAD && ((VarInsnNode)insnNode).var == 0 && nextNode.getOpcode() == Opcodes.GETFIELD
+							&& ((FieldInsnNode)nextNode).name.equals("Q") && ((FieldInsnNode)nextNode).desc.equals("Ljava/io/OutputStream;")) {
+						methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ALOAD, 0));
+						methodNode.instructions.insertBefore(insnNode, new FieldInsnNode(Opcodes.GETFIELD, "da", "Y", "[B"));
+						methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ILOAD, 2));
+						methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ILOAD, 1));
+						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "dumpRawOutputStream", "([BII)V"));
+						break;
+					}
 				}
 			}
 		}

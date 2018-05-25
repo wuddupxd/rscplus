@@ -343,6 +343,14 @@ public class Client {
 			twitch.connect();
 	}
 	
+	public static void login_hook() {
+		Replay.initializeReplayRecording();
+	}
+	
+	public static void disconnect_hook() {
+		Replay.closeReplayRecording();
+	}
+	
 	/**
 	 * Stores the user's display name in {@link #player_name}.
 	 */
