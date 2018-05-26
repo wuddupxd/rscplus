@@ -64,7 +64,7 @@ public class Replay {
 	public static boolean paused = false;
 	
 	public static int fps = 50;
-	public static float fpsPlayMultiplier = 2.0f;
+	public static float fpsPlayMultiplier = 1.0f;
 	public static int frame_time_slice;
 	
 	public static ReplayServer replayServer = null;
@@ -132,6 +132,7 @@ public class Replay {
 		}
 		
 		Game.getInstance().getJConfig().changeWorld(Settings.WORLD);
+		fpsPlayMultiplier = 1.0f;
 		isPlaying = false;
 		Logger.Info("Replay playback stopped");
 	}
