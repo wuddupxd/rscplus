@@ -222,6 +222,7 @@ public class JClassPatcher {
 			hookClassVariable(methodNode, "client", "di", "[I", "Game/Client", "bank_items_count", "[I", true, true);
 			hookClassVariable(methodNode, "client", "fj", "I", "Game/Client", "new_count_items_bank", "I", true, true);
 			hookClassVariable(methodNode, "client", "vj", "I", "Game/Client", "count_items_bank", "I", true, true);
+			hookClassVariable(methodNode, "client", "xg", "I", "Game/Client", "bank_active_page", "I", true, true);
 			
 			hookClassVariable(methodNode, "client", "sj", "I", "Game/Client", "selectedItem", "I", true, false);
 			hookClassVariable(methodNode, "client", "Rd", "I", "Game/Client", "selectedItemSlot", "I", true, false);
@@ -311,6 +312,24 @@ public class JClassPatcher {
 						methodNode.instructions.insert(insnNode, new InsnNode(Opcodes.RETURN));
 					}
 				}
+			} else if (methodNode.name.equals("a") && methodNode.desc.equals("(IB)V")) {
+				// FPS hook
+				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+				
+				while (insnNodeList.hasNext()) {
+					AbstractInsnNode insnNode = insnNodeList.next();
+					AbstractInsnNode nextNode = insnNode.getNext();
+					
+					if (nextNode == null)
+						break;
+					
+					if (insnNode.getOpcode() == Opcodes.GETSTATIC) {
+						FieldInsnNode call = (FieldInsnNode)insnNode;
+						methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ILOAD, 1));
+						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "remakeFPS", "(I)I", false));
+						methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ISTORE, 1));
+					}
+				}
 			}
 		}
 	}
@@ -379,6 +398,29 @@ public class JClassPatcher {
 									new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "processChatCommand", "(Ljava/lang/String;)Ljava/lang/String;"));
 							methodNode.instructions.insert(insertNode, new VarInsnNode(Opcodes.ALOAD, 2));
 						}
+					}
+				}
+				
+				insnNodeList = methodNode.instructions.iterator();
+				
+				while (insnNodeList.hasNext()) {
+					AbstractInsnNode insnNode = insnNodeList.next();
+					AbstractInsnNode nextNode = insnNode.getNext();
+					AbstractInsnNode twoNextNode = nextNode.getNext();
+					
+					if (nextNode == null || twoNextNode == null)
+						break;
+					
+					if (insnNode.getOpcode() == Opcodes.IMUL && nextNode.getOpcode() == Opcodes.IADD && twoNextNode.getOpcode() == Opcodes.PUTFIELD
+							&& ((FieldInsnNode)twoNextNode).name.equals("ug")) {
+						// entry point when its true to close it
+						// intercept first time camera rotation
+						AbstractInsnNode call = twoNextNode.getNext();
+						methodNode.instructions.insertBefore(call, new VarInsnNode(Opcodes.ALOAD, 0));
+						// this constant is from the one in Camera
+						methodNode.instructions.insertBefore(call, new IntInsnNode(Opcodes.BIPUSH, 126));
+						methodNode.instructions.insertBefore(call, new FieldInsnNode(Opcodes.PUTFIELD, "client", "ug", "I"));
+						break;
 					}
 				}
 			} else if (methodNode.name.equals("h") && methodNode.desc.equals("(B)V")) {

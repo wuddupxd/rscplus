@@ -61,6 +61,7 @@ public class Replay {
 	
 	public static boolean isPlaying = false;
 	public static boolean isRecording = false;
+	public static int fpsPlayMultiplier = 5;
 	
 	public static long timestamp;
 	public static long timestamp_adjust;
@@ -263,6 +264,14 @@ public class Replay {
 			}
 		} catch (Exception e) {
 		}
+	}
+	
+	// recasts fps (keep it for replay mode only)
+	public static int remakeFPS(int inFPS) {
+		int outFPS = inFPS;
+		if (isPlaying)
+			outFPS *= fpsPlayMultiplier;
+		return outFPS;
 	}
 	
 	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {

@@ -167,6 +167,7 @@ public class Client {
 	public static int[] bank_items;
 	public static int[] new_bank_items_count;
 	public static int[] new_bank_items;
+	public static int bank_active_page;
 	
 	// these two variables, they indicate distinct bank items count
 	public static int new_count_items_bank;
@@ -349,6 +350,9 @@ public class Client {
 		
 		if (TwitchIRC.isUsing())
 			twitch.connect();
+		
+		// reset for replay
+		bank_active_page = 0;
 	}
 	
 	public static void login_hook() {
