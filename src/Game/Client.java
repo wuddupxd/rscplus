@@ -343,6 +343,7 @@ public class Client {
 	
 	public static void init_game() {
 		Camera.init();
+		Menu.init();
 		combat_style = Settings.COMBAT_STYLE;
 		state = STATE_GAME;
 		
