@@ -122,7 +122,10 @@ public class KeyboardHandler implements KeyListener {
 		}
 		
 		if (!e.isConsumed()) {
-			listener_key.keyPressed(e);
+			if (!Replay.isPlaying)
+				listener_key.keyPressed(e);
+			if (Replay.isRecording)
+				Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_PRESSED, e.getKeyChar(), e.getModifiers());
 		}
 	}
 	
@@ -141,7 +144,11 @@ public class KeyboardHandler implements KeyListener {
 			e.consume();
 		
 		if (!e.isConsumed()) {
-			listener_key.keyReleased(e);
+			if (!Replay.isPlaying)
+				listener_key.keyReleased(e);
+			if (Replay.isRecording) {
+				Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_RELEASED, e.getKeyChar(), e.getModifiers());
+			}
 		}
 	}
 	
@@ -154,7 +161,11 @@ public class KeyboardHandler implements KeyListener {
 			e.consume();
 		
 		if (!e.isConsumed()) {
-			listener_key.keyTyped(e);
+			if (!Replay.isPlaying)
+				listener_key.keyTyped(e);
+			if (Replay.isRecording) {
+				Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_TYPED, e.getKeyChar(), e.getModifiers());
+			}
 		}
 	}
 	

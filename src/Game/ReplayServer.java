@@ -28,20 +28,18 @@ public class ReplayServer implements Runnable {
 			
 			Logger.Info("ReplayServer: Starting playback");
 			
-			long input_timestamp_adjust = input.readLong();
-			long server_timestamp_adjust = System.currentTimeMillis();
-			long timestamp = 0;
+			long timestamp_input = input.readLong();
+			long timestamp_adjust = System.currentTimeMillis();
 			for (;;) {
-				long time = System.currentTimeMillis() - server_timestamp_adjust;
-				if (time >= timestamp) {
+				long time = System.currentTimeMillis() - timestamp_adjust;
+				if (time >= timestamp_input) {
 					int length = input.readInt();
 					byte[] data = new byte[length];
 					input.read(data, 0, length);
 					
 					client.getOutputStream().write(data, 0, length);
-					timestamp = input.readLong() - input_timestamp_adjust;
+					timestamp_input = input.readLong();
 				}
-				Thread.sleep(1);
 			}
 		} catch (Exception e) {
 			if (sock != null) {

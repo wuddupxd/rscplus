@@ -21,6 +21,7 @@
 
 package Game;
 
+import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -36,28 +37,63 @@ public class Replay {
 	static DataOutputStream output = null;
 	static DataOutputStream input = null;
 	static DataOutputStream keys = null;
+	static DataOutputStream keyboard = null;
 	
 	static DataInputStream play_keys = null;
+	static DataInputStream play_keyboard = null;
+	
+	public static final byte KEYBOARD_TYPED = 0;
+	public static final byte KEYBOARD_PRESSED = 1;
+	public static final byte KEYBOARD_RELEASED = 2;
+	
+	public static boolean isPlaying = false;
+	public static boolean isRecording = false;
+	
+	public static long timestamp;
+	public static long timestamp_adjust;
+	public static long timestamp_kb_input;
+	
+	public static void generateTimestamp() {
+		timestamp = System.currentTimeMillis() - timestamp_adjust;
+	}
 	
 	public static void initializeReplayPlayback(String replayDirectory) {
 		try {
 			play_keys = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin")));
+			play_keyboard = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin")));
+			
+			timestamp = 0;
+			timestamp_adjust = System.currentTimeMillis();
+			timestamp_kb_input = play_keyboard.readLong();
 		} catch (Exception e) {
 			play_keys = null;
+			play_keyboard = null;
 			Logger.Error("Failed to initialize replay playback");
+			return;
 		}
 		Game.getInstance().getJConfig().changeWorld(6);
 		new Thread(new ReplayServer(replayDirectory)).start();
+		isPlaying = true;
 		Logger.Info("Replay playback started");
 	}
 	
 	public static void closeReplayPlayback() {
+		if (play_keys == null)
+			return;
+		
 		try {
 			play_keys.close();
+			play_keyboard.close();
+			
+			play_keys = null;
+			play_keyboard = null;
 		} catch (Exception e) {
+			play_keys = null;
+			play_keyboard = null;
 		}
 		
 		Game.getInstance().getJConfig().changeWorld(Settings.WORLD);
+		isPlaying = false;
 		Logger.Info("Replay playback stopped");
 	}
 	
@@ -66,7 +102,6 @@ public class Replay {
 		if (Client.username_login.length() == 0)
 			return;
 		
-		// String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
 		String timeStamp = new SimpleDateFormat("MM-dd-yyyy HH.mm.ss").format(new Date());
 		
 		String recordingDirectory = Settings.Dir.REPLAY + "/" + Client.username_login;
@@ -78,28 +113,87 @@ public class Replay {
 			output = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin")));
 			input = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin")));
 			keys = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin")));
+			keyboard = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin")));
+			timestamp = 0;
+			timestamp_adjust = System.currentTimeMillis();
 			
 			Logger.Info("Replay recording started");
 		} catch (Exception e) {
 			output = null;
 			input = null;
 			keys = null;
+			keyboard = null;
 			Logger.Error("Unable to create replay files");
+			return;
 		}
+		
+		isRecording = true;
 	}
 	
 	public static void closeReplayRecording() {
-		// TODO: We do not call this yet, we need to determine when we call it
-		// If the user fails to login, for example, we can't call this in Client.init_login()
+		if (output == null)
+			return;
 		
 		try {
 			output.close();
 			input.close();
 			keys.close();
+			keyboard.close();
+			
+			output = null;
+			input = null;
+			keys = null;
+			keyboard = null;
 			
 			Logger.Info("Replay recording stopped");
 		} catch (Exception e) {
+			output = null;
+			input = null;
+			keys = null;
+			keyboard = null;
 			Logger.Error("Unable to close replay files");
+			return;
+		}
+		
+		isRecording = false;
+	}
+	
+	public static void playKeyboardInput() {
+		try {
+			while (timestamp >= timestamp_kb_input) {
+				byte event = play_keyboard.readByte();
+				char keychar = play_keyboard.readChar();
+				int keycode = play_keyboard.readInt();
+				int modifier = play_keyboard.readInt();
+				KeyEvent keyEvent;
+				switch (event) {
+				case KEYBOARD_PRESSED:
+					keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_PRESSED, timestamp, modifier, keycode, keychar);
+					KeyboardHandler.listener_key.keyPressed(keyEvent);
+					break;
+				case KEYBOARD_RELEASED:
+					keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_RELEASED, timestamp, modifier, keycode, keychar);
+					KeyboardHandler.listener_key.keyReleased(keyEvent);
+					break;
+				case KEYBOARD_TYPED:
+					keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_TYPED, timestamp, modifier, keycode, keychar);
+					KeyboardHandler.listener_key.keyTyped(keyEvent);
+					break;
+				}
+				timestamp_kb_input = play_keyboard.readLong();
+			}
+		} catch (Exception e) {
+		}
+	}
+	
+	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
+		try {
+			keyboard.writeLong(timestamp);
+			keyboard.writeByte(event);
+			keyboard.writeChar(keychar);
+			keyboard.writeInt(keycode);
+			keyboard.writeInt(modifier);
+		} catch (Exception e) {
 		}
 	}
 	
@@ -111,9 +205,9 @@ public class Replay {
 		int len = -n5 + n;
 		
 		try {
-			input.writeLong(System.currentTimeMillis()); // timestamp
-			input.writeInt(bytesread); // data length
-			input.write(b, off, bytesread); // packet data
+			input.writeLong(timestamp);
+			input.writeInt(bytesread);
+			input.write(b, off, bytesread);
 		} catch (Exception e) {
 		}
 	}
@@ -123,9 +217,9 @@ public class Replay {
 			return;
 		
 		try {
-			output.writeLong(System.currentTimeMillis()); // timestamp
-			output.writeInt(len); // data length
-			output.write(b, off, len); // packet data
+			output.writeLong(timestamp);
+			output.writeInt(len);
+			output.write(b, off, len);
 		} catch (Exception e) {
 		}
 	}

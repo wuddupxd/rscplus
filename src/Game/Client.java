@@ -185,7 +185,7 @@ public class Client {
 	
 	private static TwitchIRC twitch = new TwitchIRC();
 	private static MouseHandler handler_mouse;
-	private static KeyboardHandler handler_keyboard;
+	public static KeyboardHandler handler_keyboard;
 	private static float[] xpdrop_state = new float[18];
 	private static long updateTimer = 0;
 	
@@ -270,6 +270,12 @@ public class Client {
 		// FIXME: This is a hack from a rsc client update (so we can skip updating the client this time)
 		version = 235;
 		
+		Replay.generateTimestamp();
+		
+		if (Replay.isPlaying) {
+			Replay.playKeyboardInput();
+		}
+		
 		if (state == STATE_GAME) {
 			// Process XP drops
 			boolean dropXP = xpdrop_state[SKILL_HP] > 0.0f; // TODO: Declare dropXP outside of the update method
@@ -344,13 +350,14 @@ public class Client {
 	}
 	
 	public static void login_hook() {
-		Replay.initializeReplayRecording();
-		// Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/playername/05-25-2018 14.36.58");
+		// Replay.initializeReplayRecording();
+		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-25-2018 19.19.39");
 	}
 	
 	public static void disconnect_hook() {
 		// ::lostcon or closeConnection
-		Replay.closeReplayRecording();
+		// Replay.closeReplayRecording();
+		Replay.closeReplayPlayback();
 	}
 	
 	/**
