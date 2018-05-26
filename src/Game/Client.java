@@ -271,11 +271,7 @@ public class Client {
 		// FIXME: This is a hack from a rsc client update (so we can skip updating the client this time)
 		version = 235;
 		
-		if (Replay.isPlaying) {
-			Replay.playKeyboardInput();
-			Replay.playMouseInput();
-		}
-		
+		// Increment the replay timestamp
 		Replay.incrementTimestamp();
 		
 		if (state == STATE_GAME) {

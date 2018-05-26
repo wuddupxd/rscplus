@@ -87,10 +87,6 @@ public class KeyboardHandler implements KeyListener {
 			}
 		}
 		
-		if (Replay.isRecording && !e.isConsumed()) {
-			Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_PRESSED, e.getKeyChar(), e.getModifiers());
-		}
-		
 		if (Client.show_questionmenu && !e.isConsumed()) {
 			if (e.getKeyCode() == KeyEvent.VK_1 || e.getKeyCode() == KeyEvent.VK_NUMPAD1)
 				dialogue_option = 0;
@@ -135,10 +131,6 @@ public class KeyboardHandler implements KeyListener {
 		if (listener_key == null)
 			return;
 		
-		if (Replay.isRecording) {
-			Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_RELEASED, e.getKeyChar(), e.getModifiers());
-		}
-		
 		// Reset dialogue option
 		if (dialogue_option >= 0) {
 			dialogue_option = -1;
@@ -157,10 +149,6 @@ public class KeyboardHandler implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		if (listener_key == null)
 			return;
-		
-		if (Replay.isRecording) {
-			Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_TYPED, e.getKeyChar(), e.getModifiers());
-		}
 		
 		if (dialogue_option >= 0)
 			e.consume();
