@@ -138,7 +138,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_RELEASED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_DRAGGED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
 		}
 		
 		if (m_rotating) {
@@ -175,7 +175,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_RELEASED, e.getX(), e.getY(), e.getWheelRotation(), e.getModifiers(), e.getClickCount(), e.getScrollType(), e.getScrollAmount(),
+			Replay.dumpMouseInput(Replay.MOUSE_WHEEL_MOVED, e.getX(), e.getY(), e.getWheelRotation(), e.getModifiers(), e.getClickCount(), e.getScrollType(), e.getScrollAmount(),
 					e.isPopupTrigger());
 		}
 		

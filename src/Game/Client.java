@@ -357,7 +357,7 @@ public class Client {
 	
 	public static void login_hook() {
 		// Replay.initializeReplayRecording();
-		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-26-2018 06.43.37");
+		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-26-2018 08.16.25");
 	}
 	
 	public static void disconnect_hook() {

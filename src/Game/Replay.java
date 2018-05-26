@@ -257,8 +257,8 @@ public class Replay {
 					Client.handler_mouse.mouseMoved(mouseEvent);
 					break;
 				case MOUSE_WHEEL_MOVED:
-					MouseWheelEvent wheelEvent = new MouseWheelEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_MOVED, timestamp, modifier, x, y, clickCount, popupTrigger,
-							scrollType, scrollAmount, rotation);
+					MouseWheelEvent wheelEvent = new MouseWheelEvent(Game.getInstance().getApplet(), MouseWheelEvent.MOUSE_WHEEL, timestamp, modifier, x, y, clickCount,
+							popupTrigger, scrollType, scrollAmount, rotation);
 					Client.handler_mouse.mouseWheelMoved(wheelEvent);
 					break;
 				}
