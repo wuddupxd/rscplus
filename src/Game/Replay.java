@@ -21,6 +21,9 @@
 
 package Game;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -36,8 +39,25 @@ public class Replay {
 	static DataOutputStream output = null;
 	static DataOutputStream input = null;
 	static DataOutputStream keys = null;
+	static DataOutputStream keyboard = null;
+	static DataOutputStream mouse = null;
 	
 	static DataInputStream play_keys = null;
+	static DataInputStream play_keyboard = null;
+	static DataInputStream play_mouse = null;
+	
+	public static final byte KEYBOARD_TYPED = 0;
+	public static final byte KEYBOARD_PRESSED = 1;
+	public static final byte KEYBOARD_RELEASED = 2;
+	
+	public static final byte MOUSE_CLICKED = 0;
+	public static final byte MOUSE_ENTERED = 1;
+	public static final byte MOUSE_EXITED = 2;
+	public static final byte MOUSE_PRESSED = 3;
+	public static final byte MOUSE_RELEASED = 4;
+	public static final byte MOUSE_DRAGGED = 5;
+	public static final byte MOUSE_MOVED = 6;
+	public static final byte MOUSE_WHEEL_MOVED = 7;
 	
 	public static boolean isPlaying = false;
 	public static boolean isRecording = false;
@@ -51,6 +71,10 @@ public class Replay {
 	public static Thread replayThread = null;
 	
 	public static int timestamp;
+	public static int timestamp_kb_input;
+	public static int timestamp_mouse_input;
+    
+    public static boolean started_record_kb_mouse = true;
 	
 	public static void incrementTimestamp() {
 		timestamp++;
@@ -62,10 +86,21 @@ public class Replay {
 		
 		try {
 			play_keys = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin")));
+            if (Settings.RECORD_KB_MOUSE) {
+                play_keyboard = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin")));
+                play_mouse = new DataInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin")));
+                started_record_kb_mouse = true;
+            } else {
+                started_record_kb_mouse = false;
+            }
 			
 			timestamp = 0;
+			timestamp_kb_input = play_keyboard.readInt();
+			timestamp_mouse_input = play_mouse.readInt();
 		} catch (Exception e) {
 			play_keys = null;
+			play_keyboard = null;
+			play_mouse = null;
 			Logger.Error("Failed to initialize replay playback");
 			return;
 		}
@@ -83,10 +118,16 @@ public class Replay {
 		
 		try {
 			play_keys.close();
+			play_keyboard.close();
+			play_mouse.close();
 			
 			play_keys = null;
+			play_keyboard = null;
+			play_mouse = null;
 		} catch (Exception e) {
 			play_keys = null;
+			play_keyboard = null;
+			play_mouse = null;
 		}
 		
 		Game.getInstance().getJConfig().changeWorld(Settings.WORLD);
@@ -110,6 +151,13 @@ public class Replay {
 			output = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin")));
 			input = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin")));
 			keys = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin")));
+            if (Settings.RECORD_KB_MOUSE) {
+                keyboard = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin")));
+                mouse = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/mouse.bin")));
+                started_record_kb_mouse = true; //need this to know whether or not to close the file if the user changes settings mid-recording
+            } else {
+                started_record_kb_mouse = false;
+            }
 			timestamp = 0;
 			
 			Logger.Info("Replay recording started");
@@ -117,6 +165,8 @@ public class Replay {
 			output = null;
 			input = null;
 			keys = null;
+			keyboard = null;
+			mouse = null;
 			Logger.Error("Unable to create replay files");
 			return;
 		}
@@ -132,16 +182,24 @@ public class Replay {
 			output.close();
 			input.close();
 			keys.close();
+            if (started_record_kb_mouse) {
+                keyboard.close();
+                mouse.close();
+            }
 			
 			output = null;
 			input = null;
 			keys = null;
+			keyboard = null;
+			mouse = null;
 			
 			Logger.Info("Replay recording stopped");
 		} catch (Exception e) {
 			// output = null;
 			input = null;
 			keys = null;
+			keyboard = null;
+			mouse = null;
 			Logger.Error("Unable to close replay files");
 			return;
 		}
@@ -149,6 +207,93 @@ public class Replay {
 		isRecording = false;
 	}
 	
+
+	public static void playKeyboardInput() {
+		try {
+            int[] unplayedKeycodes = { KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT }; //KeyEvent.VK_DOWN, KeyEvent.VK_UP not used in rsc. neither are KeyEvent.VK_KP_RIGHT, KeyEvent.VK_KP_LEFT 
+			while (timestamp >= timestamp_kb_input) {
+				byte event = play_keyboard.readByte();
+				char keychar = play_keyboard.readChar();
+				int keycode = play_keyboard.readInt();
+				int modifier = play_keyboard.readInt();
+                if (!Util.containsInt(unplayedKeycodes,keycode)) {
+                    KeyEvent keyEvent;
+                    switch (event) {
+                    case KEYBOARD_PRESSED:
+                        keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_PRESSED, timestamp, modifier, keycode, keychar);
+                        Client.handler_keyboard.keyPressed(keyEvent);
+                        break;
+                    case KEYBOARD_RELEASED:
+                        keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_RELEASED, timestamp, modifier, keycode, keychar);
+                        Client.handler_keyboard.keyReleased(keyEvent);
+                        break;
+                    case KEYBOARD_TYPED:
+                        keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_TYPED, timestamp, modifier, keycode, keychar);
+                        Client.handler_keyboard.keyTyped(keyEvent);
+                        break;
+                    }
+                    timestamp_kb_input = play_keyboard.readInt();
+                }
+			}
+		} catch (Exception e) {
+		}
+	}
+	
+	public static void playMouseInput() {
+		try {
+			while (timestamp >= timestamp_mouse_input) {
+				byte event = play_mouse.readByte();
+				int x = play_mouse.readInt();
+				int y = play_mouse.readInt();
+				int rotation = play_mouse.readInt();
+				int modifier = play_mouse.readInt();
+				int clickCount = play_mouse.readInt();
+				int scrollType = play_mouse.readInt();
+				int scrollAmount = play_mouse.readInt();
+				boolean popupTrigger = play_mouse.readBoolean();
+				int button = play_mouse.readInt();
+				MouseEvent mouseEvent;
+				switch (event) {
+				case MOUSE_CLICKED:
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_CLICKED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
+					Client.handler_mouse.mouseClicked(mouseEvent);
+					break;
+				case MOUSE_ENTERED:
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_ENTERED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
+					Client.handler_mouse.mouseEntered(mouseEvent);
+					break;
+				case MOUSE_EXITED:
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_EXITED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
+					Client.handler_mouse.mouseExited(mouseEvent);
+					break;
+				case MOUSE_PRESSED:
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_PRESSED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
+					Client.handler_mouse.mousePressed(mouseEvent);
+					break;
+				case MOUSE_RELEASED:
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_RELEASED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
+					Client.handler_mouse.mouseReleased(mouseEvent);
+					break;
+				case MOUSE_DRAGGED:
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_DRAGGED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
+					Client.handler_mouse.mouseDragged(mouseEvent);
+					break;
+				case MOUSE_MOVED:
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_MOVED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
+					Client.handler_mouse.mouseMoved(mouseEvent);
+					break;
+				case MOUSE_WHEEL_MOVED:
+					MouseWheelEvent wheelEvent = new MouseWheelEvent(Game.getInstance().getApplet(), MouseWheelEvent.MOUSE_WHEEL, timestamp, modifier, x, y, clickCount,
+							popupTrigger, scrollType, scrollAmount, rotation);
+					Client.handler_mouse.mouseWheelMoved(wheelEvent);
+					break;
+				}
+				timestamp_mouse_input = play_mouse.readInt();
+			}
+		} catch (Exception e) {
+		}
+	}
+
 	public static void togglePause() {
 		paused = !paused;
 	}
@@ -167,13 +312,40 @@ public class Replay {
 		return 1000 / fps;
 	}
 		
-	public static int getFPS() {
-		
+	public static int getFPS() {	
 		if (isPlaying) {
 			return (int)(fps * fpsPlayMultiplier);
 		}
 		
 		return fps;
+	}
+	
+	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
+		try {
+			keyboard.writeInt(timestamp);
+			keyboard.writeByte(event);
+			keyboard.writeChar(keychar);
+			keyboard.writeInt(keycode);
+			keyboard.writeInt(modifier);
+		} catch (Exception e) {
+		}
+	}
+	
+	public static void dumpMouseInput(byte event, int x, int y, int rotation, int modifier, int clickCount, int scrollType, int scrollAmount, boolean popupTrigger, int button) {
+		try {
+			mouse.writeInt(timestamp);
+			mouse.writeByte(event);
+			mouse.writeInt(x);
+			mouse.writeInt(y);
+			mouse.writeInt(rotation);
+			mouse.writeInt(modifier);
+			mouse.writeInt(clickCount);
+			mouse.writeInt(scrollType);
+			mouse.writeInt(scrollAmount);
+			mouse.writeBoolean(popupTrigger);
+			mouse.writeInt(button);
+		} catch (Exception e) {
+		}
 	}
 	
 	public static void dumpRawInputStream(byte[] b, int n, int n2, int n5, int bytesread) {

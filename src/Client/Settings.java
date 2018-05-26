@@ -159,6 +159,9 @@ public class Settings {
 	public static boolean UPDATE_CONFIRMATION = false;
 	public static boolean DISASSEMBLE = false;
 	public static String DISASSEMBLE_DIRECTORY = "dump";
+    
+    //rsc-replay settings
+    public static boolean RECORD_KB_MOUSE = false;
 	
 	private Settings() {
 		// Empty private constructor to prevent instantiation.
@@ -227,6 +230,7 @@ public class Settings {
 			VIEW_DISTANCE = getInt(props, "view_distance", VIEW_DISTANCE);
 			START_SEARCHEDBANK = getBoolean(props, "start_searched_bank", START_SEARCHEDBANK);
 			SEARCH_BANK_WORD = getString(props, "search_bank_word", SEARCH_BANK_WORD);
+            RECORD_KB_MOUSE = getBoolean(props, "record_kb_mouse", RECORD_KB_MOUSE);
 			
 			// Overlays options
 			SHOW_STATUSDISPLAY = getBoolean(props, "show_statusdisplay", SHOW_STATUSDISPLAY);
@@ -393,6 +397,7 @@ public class Settings {
 			props.setProperty("view_distance", Integer.toString(VIEW_DISTANCE));
 			props.setProperty("start_searched_bank", Boolean.toString(START_SEARCHEDBANK));
 			props.setProperty("search_bank_word", "" + SEARCH_BANK_WORD);
+            props.setProperty("record_kb_mouse", Boolean.toString(RECORD_KB_MOUSE));
 			
 			// Overlays
 			props.setProperty("show_statusdisplay", Boolean.toString(SHOW_STATUSDISPLAY));
@@ -609,6 +614,7 @@ public class Settings {
 			Client.displayMessage("@cya@Player info is now hidden", Client.CHAT_NONE);
 		save();
 	}
+    
 	
 	public static void toggleShowLoginDetails() {
 		SHOW_LOGINDETAILS = !SHOW_LOGINDETAILS;

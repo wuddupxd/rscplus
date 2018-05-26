@@ -56,6 +56,15 @@ public class Util {
 		String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 		return (os.contains("mac") || os.contains("darwin"));
 	}
+    
+    public static boolean containsInt(int[] arr, int value) {
+        for (int i=0; i<arr.length; i++) {
+            if (arr[i] == value) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
 	/**
 	 * Gets the CRC32 of a given file name.

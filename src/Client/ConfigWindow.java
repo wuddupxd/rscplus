@@ -145,6 +145,7 @@ public class ConfigWindow {
 	private JSlider generalPanelViewDistanceSlider;
 	private JCheckBox generalPanelStartSearchedBankCheckbox;
 	private JTextField generalPanelSearchBankWordTextfield;
+    private JCheckBox generalPanelRecordKBMouseCheckbox;
 	
 	// Overlays tab
 	private JCheckBox overlayPanelStatusDisplayCheckbox;
@@ -655,7 +656,11 @@ public class ConfigWindow {
 		generalPanelSearchBankWordTextfield.setMinimumSize(new Dimension(100, 28));
 		generalPanelSearchBankWordTextfield.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
 		generalPanelSearchBankWordTextfield.setAlignmentY((float)0.75);
-		
+        
+        generalPanelRecordKBMouseCheckbox = addCheckbox("(EXPERIMENTAL) Record Keyboard and Mouse input for future replay recordings", generalPanel);
+		generalPanelRecordKBMouseCheckbox.setToolTipText("(EXPERIMENTAL) additionally record mouse and keyboard inputs when recording a session");
+        
+        
 		/*
 		 * Overlays tab
 		 */
@@ -1229,6 +1234,7 @@ public class ConfigWindow {
 		generalPanelViewDistanceSlider.setValue(Settings.VIEW_DISTANCE);
 		generalPanelStartSearchedBankCheckbox.setSelected(Settings.START_SEARCHEDBANK);
 		generalPanelSearchBankWordTextfield.setText(Settings.SEARCH_BANK_WORD);
+        generalPanelRecordKBMouseCheckbox.setSelected(Settings.RECORD_KB_MOUSE);
 		
 		// Sets the text associated with the name patch slider.
 		switch (generalPanelNamePatchModeSlider.getValue()) {
@@ -1321,6 +1327,7 @@ public class ConfigWindow {
 		Settings.VIEW_DISTANCE = generalPanelViewDistanceSlider.getValue();
 		Settings.START_SEARCHEDBANK = generalPanelStartSearchedBankCheckbox.isSelected();
 		Settings.SEARCH_BANK_WORD = generalPanelSearchBankWordTextfield.getText().trim().toLowerCase();
+        Settings.RECORD_KB_MOUSE = generalPanelRecordKBMouseCheckbox.isSelected();
 		
 		// Overlays options
 		Settings.SHOW_STATUSDISPLAY = overlayPanelStatusDisplayCheckbox.isSelected();
