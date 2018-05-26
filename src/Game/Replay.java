@@ -33,7 +33,7 @@ import Client.Settings;
 import Client.Util;
 
 public class Replay {
-	// static DataOutputStream output = null;
+	static DataOutputStream output = null;
 	static DataOutputStream input = null;
 	static DataOutputStream keys = null;
 	
@@ -45,6 +45,7 @@ public class Replay {
 	
 	public static int fps = 50;
 	public static float fpsPlayMultiplier = 1.0f;
+	public static int frame_time_slice;
 	
 	public static ReplayServer replayServer = null;
 	public static Thread replayThread = null;
@@ -106,14 +107,14 @@ public class Replay {
 		Util.makeDirectory(recordingDirectory);
 		
 		try {
-			// output = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin")));
+			output = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin")));
 			input = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin")));
 			keys = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin")));
 			timestamp = 0;
 			
 			Logger.Info("Replay recording started");
 		} catch (Exception e) {
-			// output = null;
+			output = null;
 			input = null;
 			keys = null;
 			Logger.Error("Unable to create replay files");
@@ -128,11 +129,11 @@ public class Replay {
 			return;
 		
 		try {
-			// output.close();
+			output.close();
 			input.close();
 			keys.close();
 			
-			// output = null;
+			output = null;
 			input = null;
 			keys = null;
 			
@@ -156,9 +157,17 @@ public class Replay {
 		return (new File(path + "/in.bin").exists() && new File(path + "/keys.bin").exists());
 	}
 	
+	// adjusts frame time slice
+	public static int getFrameTimeSlice() {
+		if (isPlaying) {
+			frame_time_slice = 1000 / ((int)(fps * fpsPlayMultiplier));
+			return frame_time_slice;
+		}
+		
+		return 1000 / fps;
+	}
+		
 	public static int getFPS() {
-		// TODO: This method is only called once when the game is started
-		// So the FPS can't be adjusted dynamically
 		
 		if (isPlaying) {
 			return (int)(fps * fpsPlayMultiplier);
@@ -182,15 +191,39 @@ public class Replay {
 	}
 	
 	public static void dumpRawOutputStream(byte[] b, int off, int len) {
-		/*if (output == null)
+		if (output == null)
 			return;
 		
 		try {
+			boolean isLogin = false;
+			int pos = -1;
+			byte[] out_b = null;
+			// for the first bytes if byte == (byte)Client.version, 4 bytes before indicate if its
+			// login or reconnect and 5 its what determines if its login-related
+			for (int i = off + 5; i < off + Math.min(15, len); i++) {
+				if (b[i] == (byte)Client.version && b[i - 5] == 0) {
+					isLogin = true;
+					pos = i + 1;
+					out_b = b.clone();
+					break;
+				}
+			}
+			if (isLogin && pos != -1) {
+				for (int i = pos; i < off + len; i++) {
+					out_b[i] = 0;
+				}
+				
+				output.writeInt(timestamp);
+				output.writeInt(len);
+				output.write(out_b, off, len);
+				return;
+			}
+			
 			output.writeInt(timestamp);
 			output.writeInt(len);
 			output.write(b, off, len);
 		} catch (Exception e) {
-		}*/
+		}
 	}
 	
 	public static int hookXTEAKey(int key) {
