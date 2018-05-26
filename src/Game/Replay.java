@@ -226,34 +226,35 @@ public class Replay {
 				int scrollType = play_mouse.readInt();
 				int scrollAmount = play_mouse.readInt();
 				boolean popupTrigger = play_mouse.readBoolean();
+				int button = play_mouse.readInt();
 				MouseEvent mouseEvent;
 				switch (event) {
 				case MOUSE_CLICKED:
-					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_CLICKED, timestamp, modifier, x, y, clickCount, popupTrigger);
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_CLICKED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
 					Client.handler_mouse.mouseClicked(mouseEvent);
 					break;
 				case MOUSE_ENTERED:
-					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_ENTERED, timestamp, modifier, x, y, clickCount, popupTrigger);
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_ENTERED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
 					Client.handler_mouse.mouseEntered(mouseEvent);
 					break;
 				case MOUSE_EXITED:
-					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_EXITED, timestamp, modifier, x, y, clickCount, popupTrigger);
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_EXITED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
 					Client.handler_mouse.mouseExited(mouseEvent);
 					break;
 				case MOUSE_PRESSED:
-					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_PRESSED, timestamp, modifier, x, y, clickCount, popupTrigger);
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_PRESSED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
 					Client.handler_mouse.mousePressed(mouseEvent);
 					break;
 				case MOUSE_RELEASED:
-					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_RELEASED, timestamp, modifier, x, y, clickCount, popupTrigger);
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_RELEASED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
 					Client.handler_mouse.mouseReleased(mouseEvent);
 					break;
 				case MOUSE_DRAGGED:
-					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_DRAGGED, timestamp, modifier, x, y, clickCount, popupTrigger);
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_DRAGGED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
 					Client.handler_mouse.mouseDragged(mouseEvent);
 					break;
 				case MOUSE_MOVED:
-					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_MOVED, timestamp, modifier, x, y, clickCount, popupTrigger);
+					mouseEvent = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_MOVED, timestamp, modifier, x, y, clickCount, popupTrigger, button);
 					Client.handler_mouse.mouseMoved(mouseEvent);
 					break;
 				case MOUSE_WHEEL_MOVED:
@@ -290,7 +291,7 @@ public class Replay {
 		}
 	}
 	
-	public static void dumpMouseInput(byte event, int x, int y, int rotation, int modifier, int clickCount, int scrollType, int scrollAmount, boolean popupTrigger) {
+	public static void dumpMouseInput(byte event, int x, int y, int rotation, int modifier, int clickCount, int scrollType, int scrollAmount, boolean popupTrigger, int button) {
 		try {
 			mouse.writeInt(timestamp);
 			mouse.writeByte(event);
@@ -302,6 +303,7 @@ public class Replay {
 			mouse.writeInt(scrollType);
 			mouse.writeInt(scrollAmount);
 			mouse.writeBoolean(popupTrigger);
+			mouse.writeInt(button);
 		} catch (Exception e) {
 		}
 	}

@@ -49,7 +49,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_CLICKED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_CLICKED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger(), e.getButton());
 		}
 		
 		x = e.getX();
@@ -63,7 +63,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_ENTERED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_ENTERED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger(), e.getButton());
 		}
 		
 		x = e.getX();
@@ -77,7 +77,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_EXITED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_EXITED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger(), e.getButton());
 		}
 		
 		x = e.getX();
@@ -91,7 +91,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_PRESSED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_PRESSED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger(), e.getButton());
 		}
 		
 		if (e.getButton() == MouseEvent.BUTTON2) {
@@ -115,7 +115,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_RELEASED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_RELEASED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger(), e.getButton());
 		}
 		
 		if (e.getButton() == MouseEvent.BUTTON2) {
@@ -138,7 +138,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_DRAGGED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_DRAGGED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger(), e.getButton());
 		}
 		
 		if (m_rotating) {
@@ -164,7 +164,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		
 		if (Replay.isRecording) {
-			Replay.dumpMouseInput(Replay.MOUSE_MOVED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger());
+			Replay.dumpMouseInput(Replay.MOUSE_MOVED, e.getX(), e.getY(), 0, e.getModifiers(), e.getClickCount(), 0, 0, e.isPopupTrigger(), e.getButton());
 		}
 		
 		x = e.getX();
@@ -176,7 +176,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (Replay.isRecording) {
 			Replay.dumpMouseInput(Replay.MOUSE_WHEEL_MOVED, e.getX(), e.getY(), e.getWheelRotation(), e.getModifiers(), e.getClickCount(), e.getScrollType(), e.getScrollAmount(),
-					e.isPopupTrigger());
+					e.isPopupTrigger(), 0);
 		}
 		
 		x = e.getX();
