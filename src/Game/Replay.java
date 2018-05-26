@@ -64,7 +64,7 @@ public class Replay {
 	public static boolean paused = false;
 	
 	public static int fps = 50;
-	public static float fpsPlayMultiplier = 1.0f;
+	public static float fpsPlayMultiplier = 2.0f;
 	public static int frame_time_slice;
 	
 	public static ReplayServer replayServer = null;
@@ -87,16 +87,17 @@ public class Replay {
 		try {
 			play_keys = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin")));
             if (Settings.RECORD_KB_MOUSE) {
+				System.out.println("lol");
                 play_keyboard = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin")));
                 play_mouse = new DataInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin")));
+				timestamp_kb_input = play_keyboard.readInt();
+				timestamp_mouse_input = play_mouse.readInt();
                 started_record_kb_mouse = true;
             } else {
                 started_record_kb_mouse = false;
             }
 			
 			timestamp = 0;
-			timestamp_kb_input = play_keyboard.readInt();
-			timestamp_mouse_input = play_mouse.readInt();
 		} catch (Exception e) {
 			play_keys = null;
 			play_keyboard = null;
@@ -195,7 +196,7 @@ public class Replay {
 			
 			Logger.Info("Replay recording stopped");
 		} catch (Exception e) {
-			// output = null;
+			output = null;
 			input = null;
 			keys = null;
 			keyboard = null;

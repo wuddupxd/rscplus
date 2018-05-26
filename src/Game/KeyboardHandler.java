@@ -131,6 +131,14 @@ public class KeyboardHandler implements KeyListener {
 				Client.displayMessage(Replay.paused ? "Replay playback paused" : "Replay playback unpaused", Client.CHAT_QUEST);
 				e.consume();
 			}
+			else if (e.getKeyCode() == KeyEvent.VK_D) {
+				Replay.fpsPlayMultiplier /= 0.5f;
+				e.consume();
+			}
+			else if (e.getKeyCode() == KeyEvent.VK_A) {
+				Replay.fpsPlayMultiplier *= 0.5f;
+				e.consume();
+			}
 		}
 			
 		if (!e.isConsumed()) {
