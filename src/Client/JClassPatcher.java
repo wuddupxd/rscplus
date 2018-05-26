@@ -375,6 +375,8 @@ public class JClassPatcher {
 					}
 				}
 			} else if (methodNode.name.equals("u") && methodNode.desc.equals("(I)V")) {
+				// Replay pause hook
+				// TODO: Not sure but it seems like it gets broken upon starting another replay sometimes?
 				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
 				AbstractInsnNode findNode = insnNodeList.next();
 				
