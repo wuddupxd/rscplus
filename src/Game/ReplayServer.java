@@ -35,12 +35,26 @@ public class ReplayServer implements Runnable {
 			
 			Logger.Info("ReplayServer: Starting playback");
 			
+			long frame_time_slice = 1000 / Replay.getFPS();
+			long frame_timer = System.currentTimeMillis() + frame_time_slice;
+			
 			for(;;) {
-				if (!doTick()) {
-					client.close();
-					sock.close();
-					Logger.Info("ReplayServer: Playback has finished");
-					return;
+				if (!Replay.paused) {
+					long time = System.currentTimeMillis();
+				
+					frame_time_slice = 1000 / Replay.getFPS();
+				
+					if (time >= frame_timer) {
+						frame_timer = time + frame_time_slice;
+						Replay.incrementTimestamp();
+					}
+
+					if (!doTick()) {
+						client.close();
+						sock.close();
+						Logger.Info("ReplayServer: Playback has finished");
+						return;
+					}
 				}
 			}
 		} catch (Exception e) {

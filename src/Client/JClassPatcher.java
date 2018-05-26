@@ -325,8 +325,7 @@ public class JClassPatcher {
 					
 					if (insnNode.getOpcode() == Opcodes.GETSTATIC) {
 						FieldInsnNode call = (FieldInsnNode)insnNode;
-						methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ILOAD, 1));
-						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "remakeFPS", "(I)I", false));
+						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "getFPS", "()I", false));
 						methodNode.instructions.insertBefore(insnNode, new VarInsnNode(Opcodes.ISTORE, 1));
 					}
 				}

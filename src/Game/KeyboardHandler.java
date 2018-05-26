@@ -121,6 +121,14 @@ public class KeyboardHandler implements KeyListener {
 			e.consume();
 		}
 		
+		if (Replay.isPlaying) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				Replay.togglePause();
+				Client.displayMessage(Replay.paused ? "Replay playback paused" : "Replay playback unpaused", Client.CHAT_QUEST);
+				e.consume();
+			}
+		}
+			
 		if (!e.isConsumed()) {
 			listener_key.keyPressed(e);
 		}
