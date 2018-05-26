@@ -184,7 +184,7 @@ public class Client {
 	public static XPBar xpbar = new XPBar();
 	
 	private static TwitchIRC twitch = new TwitchIRC();
-	private static MouseHandler handler_mouse;
+	public static MouseHandler handler_mouse;
 	public static KeyboardHandler handler_keyboard;
 	private static float[] xpdrop_state = new float[18];
 	private static long updateTimer = 0;
@@ -274,6 +274,7 @@ public class Client {
 		
 		if (Replay.isPlaying) {
 			Replay.playKeyboardInput();
+			Replay.playMouseInput();
 		}
 		
 		if (state == STATE_GAME) {
@@ -351,7 +352,7 @@ public class Client {
 	
 	public static void login_hook() {
 		// Replay.initializeReplayRecording();
-		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-25-2018 19.19.39");
+		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-25-2018 20.42.24");
 	}
 	
 	public static void disconnect_hook() {

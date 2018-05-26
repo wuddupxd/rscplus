@@ -652,6 +652,12 @@ public class Renderer {
 			g2.drawImage(image_cursor, MouseHandler.x, MouseHandler.y, null);
 		}
 		
+		// Draw software cursor
+		if (Replay.isPlaying) {
+			setAlpha(g2, 1.0f);
+			g2.drawImage(image_cursor, MouseHandler.x, MouseHandler.y, null);
+		}
+		
 		g2.dispose();
 		
 		// Right now is a good time to take a screenshot if one is requested
