@@ -271,12 +271,12 @@ public class Client {
 		// FIXME: This is a hack from a rsc client update (so we can skip updating the client this time)
 		version = 235;
 		
-		Replay.generateTimestamp();
-		
 		if (Replay.isPlaying) {
 			Replay.playKeyboardInput();
 			Replay.playMouseInput();
 		}
+		
+		Replay.incrementTimestamp();
 		
 		if (state == STATE_GAME) {
 			// Process XP drops
@@ -343,21 +343,21 @@ public class Client {
 	}
 	
 	public static void init_game() {
+		// Reset values to make the client more deterministic
+		// This helps out the replay mode to have matching output from the time it was recorded
 		Camera.init();
 		Menu.init();
 		combat_style = Settings.COMBAT_STYLE;
 		state = STATE_GAME;
+		bank_active_page = 0;
 		
 		if (TwitchIRC.isUsing())
 			twitch.connect();
-		
-		// reset for replay
-		bank_active_page = 0;
 	}
 	
 	public static void login_hook() {
 		// Replay.initializeReplayRecording();
-		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-25-2018 20.42.24");
+		Replay.initializeReplayPlayback(Settings.Dir.REPLAY + "/tylerbeg/05-26-2018 06.43.37");
 	}
 	
 	public static void disconnect_hook() {

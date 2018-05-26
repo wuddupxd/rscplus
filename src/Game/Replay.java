@@ -61,15 +61,17 @@ public class Replay {
 	
 	public static boolean isPlaying = false;
 	public static boolean isRecording = false;
-	public static int fpsPlayMultiplier = 5;
+	public static float fpsPlayMultiplier = 0.5f;
 	
-	public static long timestamp;
-	public static long timestamp_adjust;
-	public static long timestamp_kb_input;
-	public static long timestamp_mouse_input;
+	public static ReplayServer replayServer = null;
+	public static Thread replayThread = null;
 	
-	public static void generateTimestamp() {
-		timestamp = System.currentTimeMillis() - timestamp_adjust;
+	public static int timestamp;
+	public static int timestamp_kb_input;
+	public static int timestamp_mouse_input;
+	
+	public static void incrementTimestamp() {
+		timestamp++;
 	}
 	
 	public static void initializeReplayPlayback(String replayDirectory) {
@@ -79,9 +81,8 @@ public class Replay {
 			play_mouse = new DataInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin")));
 			
 			timestamp = 0;
-			timestamp_adjust = System.currentTimeMillis();
-			timestamp_kb_input = play_keyboard.readLong();
-			timestamp_mouse_input = play_mouse.readLong();
+			timestamp_kb_input = play_keyboard.readInt();
+			timestamp_mouse_input = play_mouse.readInt();
 		} catch (Exception e) {
 			play_keys = null;
 			play_keyboard = null;
@@ -90,7 +91,9 @@ public class Replay {
 			return;
 		}
 		Game.getInstance().getJConfig().changeWorld(6);
-		new Thread(new ReplayServer(replayDirectory)).start();
+		replayServer = new ReplayServer(replayDirectory);
+		replayThread = new Thread(replayServer);
+		replayThread.start();
 		isPlaying = true;
 		Logger.Info("Replay playback started");
 	}
@@ -137,7 +140,6 @@ public class Replay {
 			keyboard = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin")));
 			mouse = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/mouse.bin")));
 			timestamp = 0;
-			timestamp_adjust = System.currentTimeMillis();
 			
 			Logger.Info("Replay recording started");
 		} catch (Exception e) {
@@ -206,7 +208,7 @@ public class Replay {
 					Client.handler_keyboard.keyTyped(keyEvent);
 					break;
 				}
-				timestamp_kb_input = play_keyboard.readLong();
+				timestamp_kb_input = play_keyboard.readInt();
 			}
 		} catch (Exception e) {
 		}
@@ -260,23 +262,26 @@ public class Replay {
 					Client.handler_mouse.mouseWheelMoved(wheelEvent);
 					break;
 				}
-				timestamp_mouse_input = play_mouse.readLong();
+				timestamp_mouse_input = play_mouse.readInt();
 			}
 		} catch (Exception e) {
 		}
 	}
 	
-	// recasts fps (keep it for replay mode only)
 	public static int remakeFPS(int inFPS) {
-		int outFPS = inFPS;
-		if (isPlaying)
-			outFPS *= fpsPlayMultiplier;
-		return outFPS;
+		// TODO: This method is only called once when the game is started
+		// So the FPS can't be adjusted dynamically
+		
+		if (isPlaying) {
+			return (int)(inFPS * fpsPlayMultiplier);
+		}
+		
+		return inFPS;
 	}
 	
 	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
 		try {
-			keyboard.writeLong(timestamp);
+			keyboard.writeInt(timestamp);
 			keyboard.writeByte(event);
 			keyboard.writeChar(keychar);
 			keyboard.writeInt(keycode);
@@ -287,7 +292,7 @@ public class Replay {
 	
 	public static void dumpMouseInput(byte event, int x, int y, int rotation, int modifier, int clickCount, int scrollType, int scrollAmount, boolean popupTrigger) {
 		try {
-			mouse.writeLong(timestamp);
+			mouse.writeInt(timestamp);
 			mouse.writeByte(event);
 			mouse.writeInt(x);
 			mouse.writeInt(y);
@@ -309,7 +314,7 @@ public class Replay {
 		int len = -n5 + n;
 		
 		try {
-			input.writeLong(timestamp);
+			input.writeInt(timestamp);
 			input.writeInt(bytesread);
 			input.write(b, off, bytesread);
 		} catch (Exception e) {
@@ -321,7 +326,7 @@ public class Replay {
 			return;
 		
 		try {
-			output.writeLong(timestamp);
+			output.writeInt(timestamp);
 			output.writeInt(len);
 			output.write(b, off, len);
 		} catch (Exception e) {
