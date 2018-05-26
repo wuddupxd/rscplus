@@ -374,6 +374,16 @@ public class JClassPatcher {
 						xteaIndex++;
 					}
 				}
+			} else if (methodNode.name.equals("u") && methodNode.desc.equals("(I)V")) {
+				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+				AbstractInsnNode findNode = insnNodeList.next();
+				
+				LabelNode label = new LabelNode();
+				methodNode.instructions.insertBefore(findNode, new InsnNode(Opcodes.ICONST_0));
+				methodNode.instructions.insertBefore(findNode, new FieldInsnNode(Opcodes.GETSTATIC, "Game/Replay", "isPlaying", "Z"));
+				methodNode.instructions.insertBefore(findNode, new JumpInsnNode(Opcodes.IFEQ, label));
+				methodNode.instructions.insertBefore(findNode, new InsnNode(Opcodes.RETURN));
+				methodNode.instructions.insertBefore(findNode, label);
 			} else if (methodNode.name.equals("J") && methodNode.desc.equals("(I)V")) {
 				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
 				while (insnNodeList.hasNext()) {
