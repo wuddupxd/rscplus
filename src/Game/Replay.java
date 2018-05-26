@@ -210,13 +210,11 @@ public class Replay {
 
 	public static void playKeyboardInput() {
 		try {
-            int[] unplayedKeycodes = { KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT }; //KeyEvent.VK_DOWN, KeyEvent.VK_UP not used in rsc. neither are KeyEvent.VK_KP_RIGHT, KeyEvent.VK_KP_LEFT 
 			while (timestamp >= timestamp_kb_input) {
 				byte event = play_keyboard.readByte();
 				char keychar = play_keyboard.readChar();
 				int keycode = play_keyboard.readInt();
 				int modifier = play_keyboard.readInt();
-                if (!Util.containsInt(unplayedKeycodes,keycode)) {
                     KeyEvent keyEvent;
                     switch (event) {
                     case KEYBOARD_PRESSED:
@@ -233,7 +231,6 @@ public class Replay {
                         break;
                     }
                     timestamp_kb_input = play_keyboard.readInt();
-                }
 			}
 		} catch (Exception e) {
 		}
