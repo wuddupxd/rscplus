@@ -87,6 +87,10 @@ public class KeyboardHandler implements KeyListener {
 			}
 		}
 		
+		if (Replay.isRecording && !e.isConsumed()) {
+			Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_PRESSED, e.getKeyChar(), e.getModifiers());
+		}
+		
 		if (Client.show_questionmenu && !e.isConsumed()) {
 			if (e.getKeyCode() == KeyEvent.VK_1 || e.getKeyCode() == KeyEvent.VK_NUMPAD1)
 				dialogue_option = 0;
@@ -112,7 +116,7 @@ public class KeyboardHandler implements KeyListener {
 		}
 		
 		if (Client.state == Client.STATE_GAME && e.getKeyCode() == KeyEvent.VK_TAB && !Client.isInterfaceOpen()) {
-			if (Client.lastpm_username != null) {
+			if (!Replay.isPlaying && Client.lastpm_username != null) {
 				Client.pm_text = "";
 				Client.pm_enteredText = "";
 				Client.pm_username = Client.lastpm_username;
@@ -122,10 +126,7 @@ public class KeyboardHandler implements KeyListener {
 		}
 		
 		if (!e.isConsumed()) {
-			if (!Replay.isPlaying)
-				listener_key.keyPressed(e);
-			if (Replay.isRecording)
-				Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_PRESSED, e.getKeyChar(), e.getModifiers());
+			listener_key.keyPressed(e);
 		}
 	}
 	
@@ -133,6 +134,10 @@ public class KeyboardHandler implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		if (listener_key == null)
 			return;
+		
+		if (Replay.isRecording) {
+			Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_RELEASED, e.getKeyChar(), e.getModifiers());
+		}
 		
 		// Reset dialogue option
 		if (dialogue_option >= 0) {
@@ -144,11 +149,7 @@ public class KeyboardHandler implements KeyListener {
 			e.consume();
 		
 		if (!e.isConsumed()) {
-			if (!Replay.isPlaying)
-				listener_key.keyReleased(e);
-			if (Replay.isRecording) {
-				Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_RELEASED, e.getKeyChar(), e.getModifiers());
-			}
+			listener_key.keyReleased(e);
 		}
 	}
 	
@@ -157,16 +158,15 @@ public class KeyboardHandler implements KeyListener {
 		if (listener_key == null)
 			return;
 		
+		if (Replay.isRecording) {
+			Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_TYPED, e.getKeyChar(), e.getModifiers());
+		}
+		
 		if (dialogue_option >= 0)
 			e.consume();
 		
 		if (!e.isConsumed()) {
-			if (!Replay.isPlaying)
-				listener_key.keyTyped(e);
-			if (Replay.isRecording) {
-				Replay.dumpKeyboardInput(e.getKeyCode(), Replay.KEYBOARD_TYPED, e.getKeyChar(), e.getModifiers());
-			}
+			listener_key.keyTyped(e);
 		}
 	}
-	
 }

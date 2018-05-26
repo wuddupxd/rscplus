@@ -38,6 +38,7 @@ public class Replay {
 	static DataOutputStream input = null;
 	static DataOutputStream keys = null;
 	static DataOutputStream keyboard = null;
+	static DataOutputStream mouse = null;
 	
 	static DataInputStream play_keys = null;
 	static DataInputStream play_keyboard = null;
@@ -114,6 +115,7 @@ public class Replay {
 			input = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin")));
 			keys = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin")));
 			keyboard = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin")));
+			mouse = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/mouse.bin")));
 			timestamp = 0;
 			timestamp_adjust = System.currentTimeMillis();
 			
@@ -123,6 +125,7 @@ public class Replay {
 			input = null;
 			keys = null;
 			keyboard = null;
+			mouse = null;
 			Logger.Error("Unable to create replay files");
 			return;
 		}
@@ -139,11 +142,13 @@ public class Replay {
 			input.close();
 			keys.close();
 			keyboard.close();
+			mouse.close();
 			
 			output = null;
 			input = null;
 			keys = null;
 			keyboard = null;
+			mouse = null;
 			
 			Logger.Info("Replay recording stopped");
 		} catch (Exception e) {
@@ -151,6 +156,7 @@ public class Replay {
 			input = null;
 			keys = null;
 			keyboard = null;
+			mouse = null;
 			Logger.Error("Unable to close replay files");
 			return;
 		}
@@ -169,15 +175,15 @@ public class Replay {
 				switch (event) {
 				case KEYBOARD_PRESSED:
 					keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_PRESSED, timestamp, modifier, keycode, keychar);
-					KeyboardHandler.listener_key.keyPressed(keyEvent);
+					Client.handler_keyboard.keyPressed(keyEvent);
 					break;
 				case KEYBOARD_RELEASED:
 					keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_RELEASED, timestamp, modifier, keycode, keychar);
-					KeyboardHandler.listener_key.keyReleased(keyEvent);
+					Client.handler_keyboard.keyReleased(keyEvent);
 					break;
 				case KEYBOARD_TYPED:
 					keyEvent = new KeyEvent(Game.getInstance().getApplet(), KeyEvent.KEY_TYPED, timestamp, modifier, keycode, keychar);
-					KeyboardHandler.listener_key.keyTyped(keyEvent);
+					Client.handler_keyboard.keyTyped(keyEvent);
 					break;
 				}
 				timestamp_kb_input = play_keyboard.readLong();
@@ -195,6 +201,9 @@ public class Replay {
 			keyboard.writeInt(modifier);
 		} catch (Exception e) {
 		}
+	}
+	
+	public static void dumpMouseInput() {
 	}
 	
 	public static void dumpRawInputStream(byte[] b, int n, int n2, int n5, int bytesread) {
