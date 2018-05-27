@@ -145,7 +145,6 @@ public class ConfigWindow {
 	private JSlider generalPanelViewDistanceSlider;
 	private JCheckBox generalPanelStartSearchedBankCheckbox;
 	private JTextField generalPanelSearchBankWordTextfield;
-    private JCheckBox generalPanelRecordKBMouseCheckbox;
 	
 	// Overlays tab
 	private JCheckBox overlayPanelStatusDisplayCheckbox;
@@ -188,6 +187,10 @@ public class ConfigWindow {
 	private JCheckBox streamingPanelIPAtLoginCheckbox;
 	private JCheckBox streamingPanelSaveLoginCheckbox;
 	
+    //Replay tab
+    private JCheckBox replayPanelRecordKBMouseCheckbox;
+	//private JSlider replayPanelFFAdjustmentSlider;
+    
 	public ConfigWindow() {
 		try {
 			// Set System L&F as a fall-back option.
@@ -266,26 +269,30 @@ public class ConfigWindow {
 		JScrollPane notificationScrollPane = new JScrollPane();
 		JScrollPane streamingScrollPane = new JScrollPane();
 		JScrollPane keybindScrollPane = new JScrollPane();
+        JScrollPane replayScrollPane = new JScrollPane();
 		
 		JPanel generalPanel = new JPanel();
 		JPanel overlayPanel = new JPanel();
 		JPanel notificationPanel = new JPanel();
 		JPanel streamingPanel = new JPanel();
 		JPanel keybindPanel = new JPanel();
+        JPanel replayPanel = new JPanel();
 		
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		frame.getContentPane().add(navigationPanel, BorderLayout.PAGE_END);
 		
-		tabbedPane.addTab("General", null, generalScrollPane, null);
-		generalScrollPane.setViewportView(generalPanel);
-		tabbedPane.addTab("Overlays", null, overlayScrollPane, null);
-		overlayScrollPane.setViewportView(overlayPanel);
-		tabbedPane.addTab("Notifications", null, notificationScrollPane, null);
-		notificationScrollPane.setViewportView(notificationPanel);
-		tabbedPane.addTab("Streaming & Privacy", null, streamingScrollPane, null);
-		streamingScrollPane.setViewportView(streamingPanel);
-		tabbedPane.addTab("Keybinds", null, keybindScrollPane, null);
-		keybindScrollPane.setViewportView(keybindPanel);
+		tabbedPane.addTab("General", null, generalScrollPane, null); 
+		tabbedPane.addTab("Overlays", null, overlayScrollPane, null); 
+		tabbedPane.addTab("Notifications", null, notificationScrollPane, null);	
+		tabbedPane.addTab("Streaming & Privacy", null, streamingScrollPane, null); 
+		tabbedPane.addTab("Keybinds", null, keybindScrollPane, null); 
+		tabbedPane.addTab("Replay", null, replayScrollPane, null); 
+        generalScrollPane.setViewportView(generalPanel);
+        overlayScrollPane.setViewportView(overlayPanel);
+        notificationScrollPane.setViewportView(notificationPanel);
+        streamingScrollPane.setViewportView(streamingPanel);
+        keybindScrollPane.setViewportView(keybindPanel);
+        replayScrollPane.setViewportView(replayPanel);
 		
 		// Adding padding for aesthetics
 		navigationPanel.setBorder(BorderFactory.createEmptyBorder(7, 10, 10, 10));
@@ -294,12 +301,14 @@ public class ConfigWindow {
 		notificationPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		streamingPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		keybindPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		
+        replayPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
 		setScrollSpeed(generalScrollPane, 20, 15);
 		setScrollSpeed(overlayScrollPane, 20, 15);
 		setScrollSpeed(notificationScrollPane, 20, 15);
 		setScrollSpeed(streamingScrollPane, 20, 15);
 		setScrollSpeed(keybindScrollPane, 20, 15);
+        setScrollSpeed(replayScrollPane, 20, 15);
 		
 		/*
 		 * Navigation buttons
@@ -655,11 +664,8 @@ public class ConfigWindow {
 		searchBankPanel.add(generalPanelSearchBankWordTextfield);
 		generalPanelSearchBankWordTextfield.setMinimumSize(new Dimension(100, 28));
 		generalPanelSearchBankWordTextfield.setMaximumSize(new Dimension(Short.MAX_VALUE, 28));
-		generalPanelSearchBankWordTextfield.setAlignmentY((float)0.75);
-        
-        generalPanelRecordKBMouseCheckbox = addCheckbox("(EXPERIMENTAL) Record Keyboard and Mouse input for future replay recordings", generalPanel);
-		generalPanelRecordKBMouseCheckbox.setToolTipText("(EXPERIMENTAL) additionally record mouse and keyboard inputs when recording a session");
-        
+		generalPanelSearchBankWordTextfield.setAlignmentY((float)0.75);        
+    
         
 		/*
 		 * Overlays tab
@@ -962,12 +968,28 @@ public class ConfigWindow {
 		// TODO: Uncomment the following line if this feature no longer requires a restart
 		// addKeybindSet(keybindPanel, "Toggle save login information", "toggle_save_login_info", KeyModifier.NONE, -1);
 		
+        addKeybindCategory(keybindPanel, "Replay");
+        addKeybindSet(keybindPanel, "Pause", "pause", KeyModifier.NONE, KeyEvent.VK_SPACE);
+        addKeybindSet(keybindPanel, "Increase playback speed", "ff_plus", KeyModifier.CTRL, KeyEvent.VK_RIGHT);
+        addKeybindSet(keybindPanel, "Decrease playback speed", "ff_minus", KeyModifier.CTRL, KeyEvent.VK_LEFT);
+        addKeybindSet(keybindPanel, "Reset playback speed", "ff_reset", KeyModifier.CTRL, KeyEvent.VK_DOWN);
+        
 		addKeybindCategory(keybindPanel, "Miscellaneous");
 		addKeybindSet(keybindPanel, "Switch to world 1 at login screen", "world_1", KeyModifier.CTRL, KeyEvent.VK_1);
 		addKeybindSet(keybindPanel, "Switch to world 2 at login screen", "world_2", KeyModifier.CTRL, KeyEvent.VK_2);
 		addKeybindSet(keybindPanel, "Switch to world 3 at login screen", "world_3", KeyModifier.CTRL, KeyEvent.VK_3);
 		addKeybindSet(keybindPanel, "Switch to world 4 at login screen", "world_4", KeyModifier.CTRL, KeyEvent.VK_4);
 		addKeybindSet(keybindPanel, "Switch to world 5 at login screen", "world_5", KeyModifier.CTRL, KeyEvent.VK_5);
+        
+        /*
+         *  Replay Settings tab
+         */
+        replayPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		replayPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		replayPanel.setLayout(new BoxLayout(replayPanel, BoxLayout.Y_AXIS));
+		
+        replayPanelRecordKBMouseCheckbox = addCheckbox("(EXPERIMENTAL) Record Keyboard and Mouse input for future replay recordings", replayPanel);
+		replayPanelRecordKBMouseCheckbox.setToolTipText("(EXPERIMENTAL) additionally record mouse and keyboard inputs when recording a session");
 	}
 	
 	/**
@@ -1234,7 +1256,6 @@ public class ConfigWindow {
 		generalPanelViewDistanceSlider.setValue(Settings.VIEW_DISTANCE);
 		generalPanelStartSearchedBankCheckbox.setSelected(Settings.START_SEARCHEDBANK);
 		generalPanelSearchBankWordTextfield.setText(Settings.SEARCH_BANK_WORD);
-        generalPanelRecordKBMouseCheckbox.setSelected(Settings.RECORD_KB_MOUSE);
 		
 		// Sets the text associated with the name patch slider.
 		switch (generalPanelNamePatchModeSlider.getValue()) {
@@ -1296,6 +1317,9 @@ public class ConfigWindow {
 		streamingPanelIPAtLoginCheckbox.setSelected(Settings.SHOW_LOGINDETAILS);
 		streamingPanelSaveLoginCheckbox.setSelected(Settings.SAVE_LOGININFO);
 		
+        // Replay tab
+        replayPanelRecordKBMouseCheckbox.setSelected(Settings.RECORD_KB_MOUSE);
+        
 		for (KeybindSet kbs : KeyboardHandler.keybindSetList) {
 			setKeybindButtonText(kbs);
 		}
@@ -1327,7 +1351,6 @@ public class ConfigWindow {
 		Settings.VIEW_DISTANCE = generalPanelViewDistanceSlider.getValue();
 		Settings.START_SEARCHEDBANK = generalPanelStartSearchedBankCheckbox.isSelected();
 		Settings.SEARCH_BANK_WORD = generalPanelSearchBankWordTextfield.getText().trim().toLowerCase();
-        Settings.RECORD_KB_MOUSE = generalPanelRecordKBMouseCheckbox.isSelected();
 		
 		// Overlays options
 		Settings.SHOW_STATUSDISPLAY = overlayPanelStatusDisplayCheckbox.isSelected();
@@ -1367,6 +1390,9 @@ public class ConfigWindow {
 		Settings.TWITCH_USERNAME = streamingPanelTwitchUserTextField.getText();
 		Settings.SHOW_LOGINDETAILS = streamingPanelIPAtLoginCheckbox.isSelected();
 		Settings.SAVE_LOGININFO = streamingPanelSaveLoginCheckbox.isSelected();
+        
+        // Replay
+        Settings.RECORD_KB_MOUSE = replayPanelRecordKBMouseCheckbox.isSelected();
 		
 		Settings.save();
 	}

@@ -23,7 +23,6 @@ package Game;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import Client.KeybindSet;
@@ -124,26 +123,6 @@ public class KeyboardHandler implements KeyListener {
 				Client.show_friends = 2;
 			}
 			e.consume();
-		}
-		
-		if (Replay.isPlaying) {
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				Replay.togglePause();
-				Client.displayMessage(Replay.paused ? "Replay playback paused" : "Replay playback unpaused", Client.CHAT_QUEST);
-				e.consume();
-			}
-			else if (e.getKeyCode() == KeyEvent.VK_D) {
-				if (Replay.fpsPlayMultiplier < 32.0f)
-					Replay.fpsPlayMultiplier /= 0.5f;
-				Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(Replay.fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
-				e.consume();
-			}
-			else if (e.getKeyCode() == KeyEvent.VK_A) {
-				if (Replay.fpsPlayMultiplier > 0.25f)
-					Replay.fpsPlayMultiplier *= 0.5f;
-				Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(Replay.fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
-				e.consume();
-			}
 		}
 			
 		if (!e.isConsumed()) {

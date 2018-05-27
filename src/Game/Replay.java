@@ -29,6 +29,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import Client.Logger;
@@ -87,7 +88,6 @@ public class Replay {
 		try {
 			play_keys = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin")));
             if (Settings.RECORD_KB_MOUSE) {
-				System.out.println("lol");
                 play_keyboard = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin")));
                 play_mouse = new DataInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin")));
 				timestamp_kb_input = play_keyboard.readInt();
@@ -318,7 +318,36 @@ public class Replay {
 		
 		return fps;
 	}
-	
+	public static void controlPlayback(String action) {
+        if (isPlaying) {
+            switch (action){
+                case "pause":
+                    togglePause();
+                    Client.displayMessage(paused ? "playback paused" : "playback unpaused", Client.CHAT_QUEST);
+                    break;
+                case "ff_plus":
+                    if (fpsPlayMultiplier < 32.0f) {
+                        fpsPlayMultiplier /= 0.5f;
+                    }
+                    Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
+                    break;
+                case "ff_minus":
+                    if (fpsPlayMultiplier > 0.25f) {
+                        fpsPlayMultiplier *= 0.5f;
+                    }
+                    Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
+                    break;
+                case "ff_reset":
+                    fpsPlayMultiplier = 1.0f;
+                    Client.displayMessage("Playback speed reset to 1x.", Client.CHAT_QUEST);
+                    break;
+                default:
+                    Logger.Error("An unrecognized command was sent to controlPlayback: " + action);
+                    break;
+            }
+        }
+    }
+    
 	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
 		try {
 			keyboard.writeInt(timestamp);

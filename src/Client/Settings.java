@@ -37,6 +37,7 @@ import Game.Client;
 import Game.Game;
 import Game.KeyboardHandler;
 import Game.Renderer;
+import Game.Replay;
 
 /**
  * Manages storing, loading, and changing settings.
@@ -279,6 +280,17 @@ public class Settings {
 			DISASSEMBLE = getBoolean(props, "disassemble", false);
 			DISASSEMBLE_DIRECTORY = getString(props, "disassemble_directory", "dump");
 			
+            // Keybinds
+			for (KeybindSet kbs : KeyboardHandler.keybindSetList) {
+				String keybindCombo = getString(props, "key_" + kbs.commandName, "" + kbs.modifier + "*" + kbs.key);
+				kbs.modifier = getKeyModifierFromString(keybindCombo);
+				kbs.key = Integer.parseInt(keybindCombo.substring(2));
+			}
+            
+            // Replay
+            RECORD_KB_MOUSE = getBoolean(props, "record_kb_mouse", RECORD_KB_MOUSE);
+            
+            
 			// Sanitize settings
 			
 			if (CUSTOM_CLIENT_SIZE_X < 512) {
@@ -336,13 +348,6 @@ public class Settings {
 			} else if (FATIGUE_FIGURES > 7) {
 				FATIGUE_FIGURES = 7;
 				save();
-			}
-			
-			// Keybinds
-			for (KeybindSet kbs : KeyboardHandler.keybindSetList) {
-				String keybindCombo = getString(props, "key_" + kbs.commandName, "" + kbs.modifier + "*" + kbs.key);
-				kbs.modifier = getKeyModifierFromString(keybindCombo);
-				kbs.key = Integer.parseInt(keybindCombo.substring(2));
 			}
 		} catch (Exception e) {
 		}
@@ -451,7 +456,10 @@ public class Settings {
 			for (KeybindSet kbs : KeyboardHandler.keybindSetList) {
 				props.setProperty("key_" + kbs.commandName, Integer.toString(getIntForKeyModifier(kbs)) + "*" + kbs.key);
 			}
-			
+
+            // Replay
+            props.setProperty("record_kb_mouse",Boolean.toString(RECORD_KB_MOUSE));
+            
 			FileOutputStream out = new FileOutputStream(Dir.JAR + "/config.ini");
 			props.store(out, "---rscplus config---");
 			out.close();
@@ -956,6 +964,18 @@ public class Settings {
 			if (Client.state == Client.STATE_LOGIN)
 				Game.getInstance().getJConfig().changeWorld(5);
 			break;
+        case "pause":
+            Replay.controlPlayback("pause");
+            break;
+        case "ff_plus":
+            Replay.controlPlayback("ff_plus");
+            break;
+        case "ff_minus":
+            Replay.controlPlayback("ff_minus");
+            break;
+        case "ff_reset":
+            Replay.controlPlayback("ff_reset");
+            break;
 		default:
 			Logger.Error("An unrecognized command was sent to processCommand: " + commandName);
 			break;
