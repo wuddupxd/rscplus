@@ -306,7 +306,7 @@ public class Replay {
 		if (paused) {
 			resetFrameTimeSlice();
 		} else {
-			getFrameTimeSlice();
+			updateFrameTimeSlice();
 		}
 	}
 	
@@ -315,18 +315,21 @@ public class Replay {
 	}
 	
 	public static void resetFrameTimeSlice() {
-		int fps = 50;
 		frame_time_slice = 1000 / fps;
 	}
 	
 	// adjusts frame time slice
 	public static int getFrameTimeSlice() {
+		return frame_time_slice;
+	}
+	
+	public static void updateFrameTimeSlice() {
 		if (isPlaying) {
 			frame_time_slice = 1000 / ((int)(fps * fpsPlayMultiplier));
-			return frame_time_slice;
+			return;
 		}
 		
-		return 1000 / fps;
+		frame_time_slice = 1000 / fps;
 	}
 		
 	public static int getFPS() {	
@@ -349,7 +352,7 @@ public class Replay {
                     if (fpsPlayMultiplier < 32.0f) {
                         fpsPlayMultiplier /= 0.5f;
                     }
-				getFrameTimeSlice();
+				updateFrameTimeSlice();
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_minus":
@@ -358,14 +361,14 @@ public class Replay {
                     if (fpsPlayMultiplier > 0.25f) {
                         fpsPlayMultiplier *= 0.5f;
                     }
-				getFrameTimeSlice();
+				updateFrameTimeSlice();
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_reset":
                 	if (paused)
                 		break;
                     fpsPlayMultiplier = 1.0f;
-				getFrameTimeSlice();
+				updateFrameTimeSlice();
                     Client.displayMessage("Playback speed reset to 1x.", Client.CHAT_QUEST);
                     break;
                 default:
