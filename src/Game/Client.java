@@ -224,6 +224,10 @@ public class Client {
 	 */
 	public static int version;
 	
+	public static boolean login_message_dirty = false;
+	public static String login_message_top = "";
+	public static String login_message_bottom = "";
+	
 	/**
 	 * Iterates through {@link #strings} array and checks if various conditions are met. Used for patching client text.
 	 */
@@ -270,6 +274,11 @@ public class Client {
 	public static void update() {
 		// FIXME: This is a hack from a rsc client update (so we can skip updating the client this time)
 		version = 235;
+		
+		if (login_message_dirty) {
+			setLoginMessage_hook(login_message_bottom, login_message_top);
+			login_message_dirty = false;
+		}
 		
     /*
 		if (Replay.isPlaying) {
@@ -341,8 +350,7 @@ public class Client {
 		
 		twitch.disconnect();
 		
-		// After logging out, the login screen shows "Please wait... Connecting to server", so we'll overwrite this
-		setLoginMessage("Please enter your username and password", "");
+		resetLoginMessage();
 		adaptStrings();
 		player_name = null;
 	}
@@ -373,6 +381,10 @@ public class Client {
 			Replay.closeReplayRecording();
 		else if (Renderer.replayOption == 2)
 			Replay.closeReplayPlayback();
+	}
+	
+	public static synchronized void resetLoginMessage() {
+		setLoginMessage("Please enter your username and password", "");
 	}
 	
 	/**
@@ -683,6 +695,12 @@ public class Client {
 	 * @param line2 the top line of text
 	 */
 	public static void setLoginMessage(String line1, String line2) {
+		login_message_dirty = true;
+		login_message_top = line2;
+		login_message_bottom = line1;
+	}
+	
+	private static void setLoginMessage_hook(String line1, String line2) {
 		if (Reflection.setLoginText == null)
 			return;
 		
