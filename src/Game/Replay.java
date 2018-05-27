@@ -66,6 +66,7 @@ public class Replay {
 	
 	public static int fps = 50;
 	public static float fpsPlayMultiplier = 1.0f;
+	public static float prevFPSPlayMultiplier = fpsPlayMultiplier;
 	public static int frame_time_slice;
 	
 	public static ReplayServer replayServer = null;
@@ -295,6 +296,12 @@ public class Replay {
 
 	public static void togglePause() {
 		paused = !paused;
+		
+		if (paused) {
+			resetFrameTimeSlice();
+		} else {
+			getFrameTimeSlice();
+		}
 	}
 	
 	public static boolean isValid(String path) {
