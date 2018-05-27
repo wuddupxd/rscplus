@@ -15,6 +15,8 @@ public class ReplayServer implements Runnable {
 	SocketChannel client = null;
 	long timestamp_input;
 	
+	public boolean isDone = false;
+	
 	ReplayServer(String directory) {
 		playbackDirectory = directory;
 	}
@@ -35,6 +37,7 @@ public class ReplayServer implements Runnable {
 			
 			Logger.Info("ReplayServer: Starting playback");
 			
+			isDone = false;
 			long frame_timer = System.currentTimeMillis() + (Replay.getFrameTimeSlice());
 			
 			for(;;) {
@@ -49,8 +52,9 @@ public class ReplayServer implements Runnable {
 					if (!doTick()) {
 						client.close();
 						sock.close();
-						Logger.Info("ReplayServer: Playback has finished");
 						Replay.resetFrameTimeSlice();
+						isDone = true;
+						Logger.Info("ReplayServer: Playback has finished");
 						return;
 					}
 				}

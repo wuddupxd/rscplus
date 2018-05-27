@@ -280,6 +280,8 @@ public class Client {
 			login_message_dirty = false;
 		}
 		
+		Replay.update();
+		
     /*
 		if (Replay.isPlaying) {
 			Replay.playKeyboardInput();

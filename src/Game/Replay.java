@@ -210,6 +210,12 @@ public class Replay {
 		isRecording = false;
 	}
 	
+	public static void update() {
+		// If the replay is done playing, disable replay mode
+		if (isPlaying && replayServer.isDone) {
+			closeReplayPlayback();
+		}
+	}
 
 	public static void playKeyboardInput() {
 		try {
