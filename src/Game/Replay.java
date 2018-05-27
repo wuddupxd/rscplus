@@ -295,11 +295,6 @@ public class Replay {
 
 	public static void togglePause() {
 		paused = !paused;
-		if (paused) {
-			frame_time_slice = 1000;
-		} else {
-			getFrameTimeSlice();
-		}
 	}
 	
 	public static boolean isValid(String path) {
