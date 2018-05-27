@@ -682,7 +682,7 @@ public class Client {
 	 * @param message a message to print
 	 * @param chat_type the type of message to send
 	 */
-	public static void displayMessage(String message, int chat_type) {
+	public static synchronized void displayMessage(String message, int chat_type) {
 		if (Client.state != Client.STATE_GAME || Reflection.displayMessage == null)
 			return;
 		
