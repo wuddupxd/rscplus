@@ -13,7 +13,6 @@ public class ReplayServer implements Runnable {
 	String playbackDirectory;
 	DataInputStream input = null;
 	SocketChannel client = null;
-	long timestamp_input;
 	
 	public boolean isDone = false;
 	
@@ -33,22 +32,12 @@ public class ReplayServer implements Runnable {
 			sock.bind(new InetSocketAddress(43594));
 			client = sock.accept();
 			
-			timestamp_input = input.readInt();
-			
 			Logger.Info("ReplayServer: Starting playback");
 			
 			isDone = false;
-			long frame_timer = System.currentTimeMillis() + (Replay.getFrameTimeSlice());
 			
 			for(;;) {
 				if (!Replay.paused) {
-					long time = System.currentTimeMillis();
-				
-					if (time >= frame_timer) {
-						frame_timer = time + (Replay.getFrameTimeSlice());
-						Replay.incrementTimestamp();
-					}
-
 					if (!doTick()) {
 						client.close();
 						sock.close();
@@ -66,6 +55,7 @@ public class ReplayServer implements Runnable {
 				try {
 					sock.close();
 					client.close();
+					input.close();
 				} catch (Exception e2) {
 				}
 			}
@@ -76,16 +66,32 @@ public class ReplayServer implements Runnable {
 	
 	public boolean doTick() {
 		try {
-			while (Replay.timestamp >= timestamp_input) {
-				int length = input.readInt();
-				ByteBuffer buffer = ByteBuffer.allocate(length);
-				input.read(buffer.array(), 0, length);
-				
-				client.write(buffer);
-				timestamp_input = input.readInt();
+			// We've reached the end of the replay
+			if (input.available() <= 2) {
+				return false;
 			}
+			
+			int timestamp_input = input.readInt();
+			long frame_timer = System.currentTimeMillis() + Replay.getFrameTimeSlice();
+			
+			while (Replay.timestamp < timestamp_input) {
+				long time = System.currentTimeMillis();
+				if (time >= frame_timer) {
+					frame_timer = time + Replay.getFrameTimeSlice();
+					Replay.incrementTimestamp();
+				}
+				
+				// Don't hammer the cpu
+				Thread.sleep(1);
+			}
+			
+			int length = input.readInt();
+			ByteBuffer buffer = ByteBuffer.allocate(length);
+			input.read(buffer.array());
+			client.write(buffer);
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		return false;
