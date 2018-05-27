@@ -627,7 +627,7 @@ public class Renderer {
 				g2.setColor(color_low);
                 
                 if (showRecordAlwaysDialogueThisFrame) { //happens the frame after the user clicks on the record box for the first time
-                    int response = JOptionPane.showConfirmDialog(null, "If you'd like, you can record your session every time you play by default.\n" +
+					int response = JOptionPane.showConfirmDialog(Game.getInstance().getApplet(), "If you'd like, you can record your session every time you play by default.\n" +
                             "\n" +
                             "These recordings do not leave your computer unless you manually do it on purpose.\n" +
                             "They also take up negligible space. You could probably fit a 1 hour session on a floppy disk, depending on what you do.\n" +
@@ -637,7 +637,8 @@ public class Renderer {
                             "\n" +
                             "Would you like to record all your play sessions by default?\n" +
                             "\n" +
-                            "NOTE: This option can be toggled in the Settings interface (ctrl-o by default) under the Replay tab.", "rscplus", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+							"NOTE: This option can be toggled in the Settings interface (ctrl-o by default) under the Replay tab.", "rscplus", JOptionPane.YES_NO_OPTION,
+							JOptionPane.INFORMATION_MESSAGE, Launcher.icon);
                     if (response == JOptionPane.YES_OPTION || response == JOptionPane.CLOSED_OPTION) {
                         Settings.RECORD_AUTOMATICALLY = true;
                     }
@@ -654,6 +655,12 @@ public class Renderer {
 				g2.setColor(color_text);
             }
 			g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+			
+			if (Settings.RECORD_AUTOMATICALLY) {
+				g2.setColor(color_text);
+				g2.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+			}
+			
 			setAlpha(g2, 1.0f);
 			drawShadowText(g2, "record", bounds.x + (bounds.width / 2), bounds.y + 6, color_text, true);
 			// Handle replay record selection click
