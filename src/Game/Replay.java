@@ -338,6 +338,8 @@ public class Replay {
                     Client.displayMessage(paused ? "Playback paused." : "Playback unpaused.", Client.CHAT_QUEST);
                     break;
                 case "ff_plus":
+                	if (paused)
+                		break;
                     if (fpsPlayMultiplier < 32.0f) {
                         fpsPlayMultiplier /= 0.5f;
                     }
@@ -345,6 +347,8 @@ public class Replay {
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_minus":
+                	if (paused)
+                		break;
                     if (fpsPlayMultiplier > 0.25f) {
                         fpsPlayMultiplier *= 0.5f;
                     }
@@ -352,6 +356,8 @@ public class Replay {
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_reset":
+                	if (paused)
+                		break;
                     fpsPlayMultiplier = 1.0f;
 				getFrameTimeSlice();
                     Client.displayMessage("Playback speed reset to 1x.", Client.CHAT_QUEST);
