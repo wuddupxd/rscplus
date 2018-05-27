@@ -693,10 +693,10 @@ public class Renderer {
 				} else {
 					JFileChooser j = new JFileChooser(Settings.Dir.REPLAY);
 					j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-					j.showDialog(Game.getInstance().getApplet(), "Select");
+					int response = j.showDialog(Game.getInstance().getApplet(), "Select");
 					
 					File selection = j.getSelectedFile();
-					if (selection != null) {
+					if (selection != null && response != JFileChooser.CANCEL_OPTION) {
 						replayName = selection.getPath();
 						if (Replay.isValid(replayName)) {
 							replayOption = 2;
@@ -708,6 +708,8 @@ public class Renderer {
 									"You need to select the directory that contains the replay data!", "rscplus", JOptionPane.ERROR_MESSAGE,
 									Launcher.icon_warn);
 						}
+					} else {
+						replayOption = 0;
 					}
 				}
 			}
