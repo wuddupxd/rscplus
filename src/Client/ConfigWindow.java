@@ -968,7 +968,7 @@ public class ConfigWindow {
 		// TODO: Uncomment the following line if this feature no longer requires a restart
 		// addKeybindSet(keybindPanel, "Toggle save login information", "toggle_save_login_info", KeyModifier.NONE, -1);
 		
-        addKeybindCategory(keybindPanel, "Replay");
+        addKeybindCategory(keybindPanel, "Replay (only used while a recording is played back)");
         addKeybindSet(keybindPanel, "Pause", "pause", KeyModifier.NONE, KeyEvent.VK_SPACE);
         addKeybindSet(keybindPanel, "Increase playback speed", "ff_plus", KeyModifier.CTRL, KeyEvent.VK_RIGHT);
         addKeybindSet(keybindPanel, "Decrease playback speed", "ff_minus", KeyModifier.CTRL, KeyEvent.VK_LEFT);

@@ -323,7 +323,7 @@ public class Replay {
             switch (action){
                 case "pause":
                     togglePause();
-                    Client.displayMessage(paused ? "Playback paused" : "Playback unpaused", Client.CHAT_QUEST);
+                    Client.displayMessage(paused ? "Playback paused." : "Playback unpaused.", Client.CHAT_QUEST);
                     break;
                 case "ff_plus":
                     if (fpsPlayMultiplier < 32.0f) {
