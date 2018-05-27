@@ -50,6 +50,7 @@ public class ReplayServer implements Runnable {
 						client.close();
 						sock.close();
 						Logger.Info("ReplayServer: Playback has finished");
+						Replay.resetFrameTimeSlice();
 						return;
 					}
 				}

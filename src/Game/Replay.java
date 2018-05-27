@@ -295,10 +295,20 @@ public class Replay {
 
 	public static void togglePause() {
 		paused = !paused;
+		if (paused) {
+			frame_time_slice = 1000;
+		} else {
+			getFrameTimeSlice();
+		}
 	}
 	
 	public static boolean isValid(String path) {
 		return (new File(path + "/in.bin").exists() && new File(path + "/keys.bin").exists());
+	}
+	
+	public static void resetFrameTimeSlice() {
+		int fps = 50;
+		frame_time_slice = 1000 / fps;
 	}
 	
 	// adjusts frame time slice
@@ -329,16 +339,19 @@ public class Replay {
                     if (fpsPlayMultiplier < 32.0f) {
                         fpsPlayMultiplier /= 0.5f;
                     }
+				getFrameTimeSlice();
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_minus":
                     if (fpsPlayMultiplier > 0.25f) {
                         fpsPlayMultiplier *= 0.5f;
                     }
+				getFrameTimeSlice();
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_reset":
                     fpsPlayMultiplier = 1.0f;
+				getFrameTimeSlice();
                     Client.displayMessage("Playback speed reset to 1x.", Client.CHAT_QUEST);
                     break;
                 default:
