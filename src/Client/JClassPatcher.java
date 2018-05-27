@@ -375,6 +375,25 @@ public class JClassPatcher {
 						xteaIndex++;
 					}
 				}
+				
+				// treat response other than 64 or 1 or reconnecting (i hope order is right) as disconnect hook
+				insnNodeList = methodNode.instructions.iterator();
+				
+				while (insnNodeList.hasNext()) {
+					AbstractInsnNode insnNode = insnNodeList.next();
+					AbstractInsnNode nextNode = insnNode.getNext();
+					AbstractInsnNode twoNextNodes = nextNode.getNext();
+					
+					if (nextNode == null || twoNextNodes == null)
+						break;
+					
+					if (insnNode.getOpcode() == Opcodes.ILOAD && ((VarInsnNode)insnNode).var == 11 && nextNode.getOpcode() == Opcodes.ICONST_M1
+							&& twoNextNodes.getOpcode() == Opcodes.IXOR) {
+						// entry point when its true to close it
+						methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "disconnect_hook", "()V", false));
+						break;
+					}
+				}
 			} else if (methodNode.name.equals("u") && methodNode.desc.equals("(I)V")) {
 				// Replay pause hook
 				// TODO: Not sure but it seems like it gets broken upon starting another replay sometimes?
