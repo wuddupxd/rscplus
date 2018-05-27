@@ -53,6 +53,8 @@ public class ReplayServer implements Runnable {
 						return;
 					}
 				}
+				
+				Thread.sleep(1);
 			}
 		} catch (Exception e) {
 			if (sock != null) {
