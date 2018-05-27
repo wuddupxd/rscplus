@@ -385,7 +385,7 @@ public class Client {
 			Replay.closeReplayPlayback();
 	}
 	
-	public static synchronized void resetLoginMessage() {
+	public static void resetLoginMessage() {
 		setLoginMessage("Please enter your username and password", "");
 	}
 	
@@ -702,7 +702,7 @@ public class Client {
 		login_message_bottom = line1;
 	}
 	
-	private static void setLoginMessage_hook(String line1, String line2) {
+	private static synchronized void setLoginMessage_hook(String line1, String line2) {
 		if (Reflection.setLoginText == null)
 			return;
 		
