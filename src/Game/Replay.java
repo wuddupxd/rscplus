@@ -318,7 +318,7 @@ public class Replay {
 		
 		return fps;
 	}
-	public static void controlPlayback(String action) {
+	public static boolean controlPlayback(String action) {
         if (isPlaying) {
             switch (action){
                 case "pause":
@@ -345,6 +345,9 @@ public class Replay {
                     Logger.Error("An unrecognized command was sent to controlPlayback: " + action);
                     break;
             }
+            return true;
+        } else {
+            return false;
         }
     }
     

@@ -53,36 +53,45 @@ public class KeyboardHandler implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if (listener_key == null)
 			return;
+        boolean shouldConsume;
 		
 		if (e.isControlDown()) {
 			for (KeybindSet kbs : keybindSetList) {
 				if (kbs.getModifier() == KeyModifier.CTRL && e.getKeyCode() == kbs.getKey()) {
-					Settings.processKeybindCommand(kbs.getCommandName());
-					e.consume();
+					shouldConsume = Settings.processKeybindCommand(kbs.getCommandName());
+                    if (shouldConsume) {
+                        e.consume();
+                    }
 				}
 			}
 			
 		} else if (e.isShiftDown()) {
 			for (KeybindSet kbs : keybindSetList) {
 				if (kbs.getModifier() == KeyModifier.SHIFT && e.getKeyCode() == kbs.getKey()) {
-					Settings.processKeybindCommand(kbs.getCommandName());
-					e.consume();
+					shouldConsume = Settings.processKeybindCommand(kbs.getCommandName());
+                    if (shouldConsume) {
+                        e.consume();
+                    }
 				}
 			}
 			
 		} else if (e.isAltDown()) {
 			for (KeybindSet kbs : keybindSetList) {
 				if (kbs.getModifier() == KeyModifier.ALT && e.getKeyCode() == kbs.getKey()) {
-					Settings.processKeybindCommand(kbs.getCommandName());
-					e.consume();
+					shouldConsume = Settings.processKeybindCommand(kbs.getCommandName());
+                    if (shouldConsume) {
+                        e.consume();
+                    }
 				}
 			}
 			
 		} else {
 			for (KeybindSet kbs : keybindSetList) {
 				if (kbs.getModifier() == KeyModifier.NONE && e.getKeyCode() == kbs.getKey()) {
-					Settings.processKeybindCommand(kbs.getCommandName());
-					e.consume();
+					shouldConsume = Settings.processKeybindCommand(kbs.getCommandName());
+                    if (shouldConsume) {
+                        e.consume();
+                    }
 				}
 			}
 		}

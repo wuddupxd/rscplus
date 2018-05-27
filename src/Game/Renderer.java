@@ -110,6 +110,7 @@ public class Renderer {
 	public static String[] shellStrings;
 	
 	private static boolean macOS_resize_workaround = Util.isMacOS();
+    private static boolean showRecordAlwaysDialogueThisFrame = false;
 	
 	public static void init() {
 		// patch copyright to match current year
@@ -622,10 +623,36 @@ public class Renderer {
 			Rectangle bounds = new Rectangle(width - 148, height - 36, 48, 16);
 			drawShadowText(g2, "-replay-", bounds.x + 48, bounds.y - 10, color_text, true);
 			setAlpha(g2, 0.5f);
-			if (replayOption == 1)
+			if (replayOption == 1 || Settings.RECORD_AUTOMATICALLY) {
 				g2.setColor(color_low);
-			else
+                
+                if (showRecordAlwaysDialogueThisFrame) { //happens the frame after the user clicks on the record box for the first time
+                    int response = JOptionPane.showConfirmDialog(null, "If you'd like, you can record your session every time you play by default.\n" +
+                            "\n" +
+                            "These recordings do not leave your computer unless you manually do it on purpose.\n" +
+                            "They also take up negligible space. You could probably fit a 1 hour session on a floppy disk, depending on what you do.\n" +
+                            "\n" +
+                            "Recordings can be played back later, even offline, and capture the data the server sends and that you send the server.\n"+
+                            "Your password is not in the capture.\n"+
+                            "\n" +
+                            "Would you like to record all your play sessions by default?\n" +
+                            "\n" +
+                            "NOTE: This option can be toggled in the Settings interface (ctrl-o by default) under the Replay tab.", "rscplus", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                    if (response == JOptionPane.YES_OPTION || response == JOptionPane.CLOSED_OPTION) {
+                        Settings.RECORD_AUTOMATICALLY = true;
+                    }
+                    else if (response == JOptionPane.NO_OPTION) {
+                        Settings.RECORD_AUTOMATICALLY = false;
+                    }
+                    Settings.RECORD_AUTOMATICALLY_FIRST_TIME = false;
+                    showRecordAlwaysDialogueThisFrame = false;
+                    Settings.save();
+                } else if (Settings.RECORD_AUTOMATICALLY_FIRST_TIME) {
+                    showRecordAlwaysDialogueThisFrame = true; //want to show the dialouge next frame after it's detected so the box is shown "selected" to the user
+                }
+			} else {
 				g2.setColor(color_text);
+            }
 			g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 			setAlpha(g2, 1.0f);
 			drawShadowText(g2, "record", bounds.x + (bounds.width / 2), bounds.y + 6, color_text, true);

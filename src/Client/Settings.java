@@ -163,6 +163,8 @@ public class Settings {
     
     //rsc-replay settings
     public static boolean RECORD_KB_MOUSE = false;
+    public static boolean RECORD_AUTOMATICALLY = false;
+    public static boolean RECORD_AUTOMATICALLY_FIRST_TIME = true;
 	
 	private Settings() {
 		// Empty private constructor to prevent instantiation.
@@ -231,7 +233,6 @@ public class Settings {
 			VIEW_DISTANCE = getInt(props, "view_distance", VIEW_DISTANCE);
 			START_SEARCHEDBANK = getBoolean(props, "start_searched_bank", START_SEARCHEDBANK);
 			SEARCH_BANK_WORD = getString(props, "search_bank_word", SEARCH_BANK_WORD);
-            RECORD_KB_MOUSE = getBoolean(props, "record_kb_mouse", RECORD_KB_MOUSE);
 			
 			// Overlays options
 			SHOW_STATUSDISPLAY = getBoolean(props, "show_statusdisplay", SHOW_STATUSDISPLAY);
@@ -288,7 +289,10 @@ public class Settings {
 			}
             
             // Replay
+            RECORD_AUTOMATICALLY = getBoolean(props, "record_automatically", RECORD_AUTOMATICALLY);
+            RECORD_AUTOMATICALLY_FIRST_TIME = getBoolean(props, "record_automatically_first_time", RECORD_AUTOMATICALLY_FIRST_TIME);
             RECORD_KB_MOUSE = getBoolean(props, "record_kb_mouse", RECORD_KB_MOUSE);
+            
             
             
 			// Sanitize settings
@@ -402,7 +406,6 @@ public class Settings {
 			props.setProperty("view_distance", Integer.toString(VIEW_DISTANCE));
 			props.setProperty("start_searched_bank", Boolean.toString(START_SEARCHEDBANK));
 			props.setProperty("search_bank_word", "" + SEARCH_BANK_WORD);
-            props.setProperty("record_kb_mouse", Boolean.toString(RECORD_KB_MOUSE));
 			
 			// Overlays
 			props.setProperty("show_statusdisplay", Boolean.toString(SHOW_STATUSDISPLAY));
@@ -458,6 +461,8 @@ public class Settings {
 			}
 
             // Replay
+            props.setProperty("record_automatically",Boolean.toString(RECORD_AUTOMATICALLY));
+            props.setProperty("record_automatically_first_time",Boolean.toString(RECORD_AUTOMATICALLY_FIRST_TIME));
             props.setProperty("record_kb_mouse",Boolean.toString(RECORD_KB_MOUSE));
             
 			FileOutputStream out = new FileOutputStream(Dir.JAR + "/config.ini");
@@ -865,121 +870,120 @@ public class Settings {
 	 * 
 	 * @param commandName the name of a keybind command as defined by {@link ConfigWindow#addKeybindSet}
 	 */
-	public static void processKeybindCommand(String commandName) {
+	public static boolean processKeybindCommand(String commandName) {
 		switch (commandName) {
 		case "sleep":
-			if (Client.state != Client.STATE_LOGIN)
+			if (Client.state != Client.STATE_LOGIN && !Replay.isPlaying)
 				Client.sleep();
-			break;
+			return true;
 		case "logout":
-			if (Client.state != Client.STATE_LOGIN)
+			if (Client.state != Client.STATE_LOGIN && !Replay.isPlaying)
 				Client.logout();
-			break;
+			return true;
 		case "screenshot":
-			Renderer.takeScreenshot();
-			break;
+            if (!Replay.isPlaying) {
+                Renderer.takeScreenshot();
+            }
+			return true;
 		case "toggle_colorize":
 			Settings.toggleColorTerminal();
-			break;
+			return true;
 		case "toggle_combat_xp_menu":
 			Settings.toggleCombatMenu();
-			break;
+			return true;
 		case "toggle_debug":
 			Settings.toggleDebug();
-			break;
+			return true;
 		case "toggle_fatigue_alert":
 			Settings.toggleFatigueAlert();
-			break;
+			return true;
 		case "toggle_inventory_full_alert":
 			Settings.toggleInventoryFullAlert();
-			break;
+			return true;
 		case "toggle_fatigue_drops":
 			Settings.toggleFatigueDrops();
-			break;
+			return true;
 		case "toggle_food_heal_overlay":
 			Settings.toggleFoodOverlay();
-			break;
+			return true;
 		case "toggle_friend_name_overlay":
 			Settings.toggleShowFriendInfo();
-			break;
+			return true;
 		case "toggle_hpprayerfatigue_display":
 			Settings.toggleStatusDisplay();
-			break;
+			return true;
 		case "toggle_inven_count_overlay":
 			Settings.toggleInvCount();
-			break;
+			return true;
 		case "toggle_ipdns":
 			Settings.toggleShowLoginDetails();
-			break;
+			return true;
 		case "toggle_item_overlay":
 			Settings.toggleShowItemInfo();
-			break;
+			return true;
 		case "toggle_hitboxes":
 			Settings.toggleShowHitbox();
-			break;
+			return true;
 		case "toggle_npc_name_overlay":
 			Settings.toggleShowNPCInfo();
-			break;
+			return true;
 		case "toggle_player_name_overlay":
 			Settings.toggleShowPlayerInfo();
-			break;
+			return true;
 		case "toggle_roof_hiding":
 			Settings.toggleHideRoofs();
-			break;
+			return true;
 		case "toggle_save_login_info":
 			Settings.toggleSaveLoginInfo();
-			break;
+			return true;
 		case "toggle_health_regen_timer":
 			Settings.toggleHealthRegenTimer();
-			break;
+			return true;
 		case "toggle_twitch_chat":
 			Settings.toggleTwitchHide();
-			break;
+			return true;
 		case "toggle_xp_drops":
 			Settings.toggleXpDrops();
-			break;
+			return true;
 		case "toggle_start_searched_bank":
 			Settings.toggleStartSearchedBank("", false);
-			break;
+			return true;
 		case "show_config_window":
 			Launcher.getConfigWindow().showConfigWindow();
-			break;
+			return true;
 		case "world_1":
 			if (Client.state == Client.STATE_LOGIN)
 				Game.getInstance().getJConfig().changeWorld(1);
-			break;
+			return true;
 		case "world_2":
 			if (Client.state == Client.STATE_LOGIN)
 				Game.getInstance().getJConfig().changeWorld(2);
-			break;
+			return true;
 		case "world_3":
 			if (Client.state == Client.STATE_LOGIN)
 				Game.getInstance().getJConfig().changeWorld(3);
-			break;
+			return true;
 		case "world_4":
 			if (Client.state == Client.STATE_LOGIN)
 				Game.getInstance().getJConfig().changeWorld(4);
-			break;
+			return true;
 		case "world_5":
 			if (Client.state == Client.STATE_LOGIN)
 				Game.getInstance().getJConfig().changeWorld(5);
-			break;
+			return true;
         case "pause":
-            Replay.controlPlayback("pause");
-            break;
+            return Replay.controlPlayback("pause");
         case "ff_plus":
-            Replay.controlPlayback("ff_plus");
-            break;
+            return Replay.controlPlayback("ff_plus");
         case "ff_minus":
-            Replay.controlPlayback("ff_minus");
-            break;
+            return Replay.controlPlayback("ff_minus");
         case "ff_reset":
-            Replay.controlPlayback("ff_reset");
-            break;
+            return Replay.controlPlayback("ff_reset");
 		default:
 			Logger.Error("An unrecognized command was sent to processCommand: " + commandName);
 			break;
 		}
+        return false;
 	}
 	
 	/**

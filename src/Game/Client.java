@@ -33,6 +33,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+//import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import org.fusesource.jansi.AnsiConsole;
 import Client.KeybindSet;
 import Client.Logger;
@@ -369,10 +371,11 @@ public class Client {
 	}
 	
 	public static void login_hook() {
-		if (Renderer.replayOption == 1)
+		if (Renderer.replayOption == 1 || Settings.RECORD_AUTOMATICALLY) {
 			Replay.initializeReplayRecording();
-		else if (Renderer.replayOption == 2)
+        } else if (Renderer.replayOption == 2) {
 			Replay.initializeReplayPlayback(Renderer.replayName);
+        }
 	}
 	
 	public static void disconnect_hook() {
