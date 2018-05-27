@@ -41,6 +41,7 @@ public class ReplayServer implements Runnable {
 					if (!doTick()) {
 						client.close();
 						sock.close();
+						input.close();
 						Replay.resetFrameTimeSlice();
 						isDone = true;
 						Logger.Info("ReplayServer: Playback has finished");
