@@ -126,6 +126,7 @@ public class JClassPatcher {
 			hookClassVariable(methodNode, "e", "m", "I", "Game/Renderer", "width", "I", false, true);
 			hookClassVariable(methodNode, "e", "a", "I", "Game/Renderer", "height", "I", false, true);
 			hookClassVariable(methodNode, "e", "Ib", "I", "Game/Replay", "frame_time_slice", "I", true, true);
+			hookClassVariable(methodNode, "client", "fc", "I", "Game/Replay", "connection_port", "I", true, true);
 			
 			hookClassVariable(methodNode, "lb", "pb", "[I", "Game/Renderer", "pixels", "[I", true, true);
 			

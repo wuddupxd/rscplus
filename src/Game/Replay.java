@@ -64,6 +64,8 @@ public class Replay {
 	public static final byte MOUSE_MOVED = 6;
 	public static final byte MOUSE_WHEEL_MOVED = 7;
 	
+	public static final int DEFAULT_PORT = 43594;
+	
 	public static boolean isPlaying = false;
 	public static boolean isRecording = false;
 	public static boolean paused = false;
@@ -72,6 +74,7 @@ public class Replay {
 	public static float fpsPlayMultiplier = 1.0f;
 	public static float prevFPSPlayMultiplier = fpsPlayMultiplier;
 	public static int frame_time_slice;
+	public static int connection_port;
 	
 	public static ReplayServer replayServer = null;
 	public static Thread replayThread = null;
@@ -150,6 +153,7 @@ public class Replay {
 		Game.getInstance().getJConfig().changeWorld(Settings.WORLD);
 		resetFrameTimeSlice();
 		Client.closeConnection(true);
+		resetPort();
 		fpsPlayMultiplier = 1.0f;
 		replayServer.isDone = true;
 		isPlaying = false;
@@ -374,6 +378,19 @@ public class Replay {
 		
 		return fps;
 	}
+	
+	// only change port in replay
+	public static void changePort(int newPort) {
+		if (isPlaying) {
+			Logger.Info("Replay: Changing port to " + newPort);
+			connection_port = newPort;
+		}
+	}
+	
+	public static void resetPort() {
+		connection_port = Replay.DEFAULT_PORT;
+	}
+	
 	public static boolean controlPlayback(String action) {
         if (isPlaying) {
             switch (action){

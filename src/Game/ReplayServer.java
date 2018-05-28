@@ -4,7 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -39,6 +41,20 @@ public class ReplayServer implements Runnable {
 	@Override
 	public void run() {
 		sock = null;
+		// this one will try to find open port
+		int port = -1;
+		int usePort;
+		// attempt to find free port starting from default port
+		for (int i = 0; i < 10; i++) {
+			try {
+				new ServerSocket(Replay.DEFAULT_PORT + i).close();
+				port = Replay.DEFAULT_PORT + i;
+				break;
+			} catch (IOException e) {
+				continue;
+			}
+		}
+		
 		try {
 			File file = new File(playbackDirectory + "/in.bin.gz");
 			size = file.length();
@@ -50,7 +66,12 @@ public class ReplayServer implements Runnable {
 			file_input.available();
 			
 			sock = ServerSocketChannel.open();
-			sock.bind(new InetSocketAddress(43594));
+			// last attempt 10 + default port
+			usePort = port == -1 ? Replay.DEFAULT_PORT + 10 : port;
+			if (usePort != Replay.DEFAULT_PORT) {
+				Replay.changePort(usePort);
+			}
+			sock.bind(new InetSocketAddress(usePort));
 			client = sock.accept();
 			client.configureBlocking(false);
 			
