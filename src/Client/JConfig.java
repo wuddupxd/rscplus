@@ -27,7 +27,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import Game.Game;
 
 /**
  * Parses, stores, and retrieves values from a jav_config.ws file
@@ -133,7 +132,6 @@ public class JConfig {
 		if (world == 6) {
 			// Replay playback "world"
 			m_data.put("codebase", "http://127.0.0.1/");
-			Game.getInstance().setTitle("Replay");
 			return;
 		}
 		
@@ -154,10 +152,6 @@ public class JConfig {
 		// Update settings
 		Settings.WORLD = world;
 		Settings.save();
-		
-		// TODO: This may not be the best way to handle this, but for now this works
-		// If we start setting other title info, it will be broken by this
-		Game.getInstance().setTitle("World " + (Settings.WORLD));
 	}
 	
 	/**

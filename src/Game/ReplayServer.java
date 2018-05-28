@@ -16,10 +16,20 @@ public class ReplayServer implements Runnable {
 	ByteBuffer readBuffer = null;
 	
 	public boolean isDone = false;
+	public int size = 0;
+	public long available = 0;
 	
 	ReplayServer(String directory) {
 		playbackDirectory = directory;
 		readBuffer = ByteBuffer.allocate(1024);
+	}
+	
+	public int getPercentRemaining() {
+		try {
+			return (int)(available * 100 / size);
+		} catch (Exception e) {
+		}
+		return 0;
 	}
 	
 	@Override
@@ -27,6 +37,7 @@ public class ReplayServer implements Runnable {
 		ServerSocketChannel sock = null;
 		try {
 			input = new DataInputStream(new FileInputStream(new File(playbackDirectory + "/in.bin")));
+			size = input.available();
 			
 			Logger.Info("ReplayServer: Waiting for client...");
 			
@@ -92,6 +103,8 @@ public class ReplayServer implements Runnable {
 			ByteBuffer buffer = ByteBuffer.allocate(length);
 			input.read(buffer.array());
 			client.write(buffer);
+			
+			available = input.available();
 			
 			// Read from client, but don't do anything with the data
 			while (client.read(readBuffer) > 0) {

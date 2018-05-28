@@ -223,6 +223,10 @@ public class Replay {
 				closeReplayPlayback();
 		}
 	}
+	
+	public static int getPercentPlayed() {
+		return 100 - replayServer.getPercentRemaining();
+	}
 
 	public static void playKeyboardInput() {
 		try {
@@ -331,6 +335,9 @@ public class Replay {
 	}
 	
 	public static void updateFrameTimeSlice() {
+		if (paused)
+			return;
+		
 		if (isPlaying) {
 			frame_time_slice = 1000 / ((int)(fps * fpsPlayMultiplier));
 			return;
@@ -357,8 +364,6 @@ public class Replay {
                     Client.displayMessage(paused ? "Playback paused." : "Playback unpaused.", Client.CHAT_QUEST);
                     break;
                 case "ff_plus":
-                	if (paused)
-                		break;
                     if (fpsPlayMultiplier < 256.0f) {
                         fpsPlayMultiplier /= 0.5f;
                     }
@@ -366,8 +371,6 @@ public class Replay {
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_minus":
-                	if (paused)
-                		break;
                     if (fpsPlayMultiplier > 0.25f) {
                         fpsPlayMultiplier *= 0.5f;
                     }
@@ -375,8 +378,6 @@ public class Replay {
                     Client.displayMessage("Playback speed set to " + new DecimalFormat("##.##").format(fpsPlayMultiplier) + "x.", Client.CHAT_QUEST);
                     break;
                 case "ff_reset":
-                	if (paused)
-                		break;
                     fpsPlayMultiplier = 1.0f;
 				updateFrameTimeSlice();
                     Client.displayMessage("Playback speed reset to 1x.", Client.CHAT_QUEST);

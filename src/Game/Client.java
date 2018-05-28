@@ -357,6 +357,8 @@ public class Client {
 			if (isWelcomeScreen() && currentFatigue != getActualFatigue())
 				currentFatigue = getActualFatigue();
 		}
+		
+		Game.getInstance().updateTitle();
 	}
 	
 	public static void init_login() {
