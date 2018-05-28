@@ -24,6 +24,8 @@ package Game;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -87,10 +89,10 @@ public class Replay {
 			Client.username_login = "Replay";
 		
 		try {
-			play_keys = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin")));
+			play_keys = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin"))));
             if (Settings.RECORD_KB_MOUSE) {
-                play_keyboard = new DataInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin")));
-                play_mouse = new DataInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin")));
+				play_keyboard = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin"))));
+				play_mouse = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin"))));
 				timestamp_kb_input = play_keyboard.readInt();
 				timestamp_mouse_input = play_mouse.readInt();
                 started_record_kb_mouse = true;
@@ -154,12 +156,12 @@ public class Replay {
 		Util.makeDirectory(recordingDirectory);
 		
 		try {
-			output = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin")));
-			input = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin")));
-			keys = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin")));
+			output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin"))));
+			input = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin"))));
+			keys = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin"))));
             if (Settings.RECORD_KB_MOUSE) {
-                keyboard = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin")));
-                mouse = new DataOutputStream(new FileOutputStream(new File(recordingDirectory + "/mouse.bin")));
+				keyboard = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin"))));
+				mouse = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/mouse.bin"))));
                 started_record_kb_mouse = true; //need this to know whether or not to close the file if the user changes settings mid-recording
             } else {
                 started_record_kb_mouse = false;

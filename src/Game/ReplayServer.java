@@ -1,5 +1,6 @@
 package Game;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +40,7 @@ public class ReplayServer implements Runnable {
 		try {
 			File file = new File(playbackDirectory + "/in.bin");
 			size = file.length();
-			input = new DataInputStream(new FileInputStream(file));
+			input = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 			
 			Logger.Info("ReplayServer: Waiting for client...");
 			
