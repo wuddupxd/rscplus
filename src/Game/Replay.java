@@ -98,10 +98,16 @@ public class Replay {
 		try {
 			play_keys = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin"))));
             if (Settings.RECORD_KB_MOUSE) {
-				play_keyboard = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin.gz")))));
-				play_mouse = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin.gz")))));
-				timestamp_kb_input = play_keyboard.readInt();
-				timestamp_mouse_input = play_mouse.readInt();
+				File file = new File(replayDirectory + "/keyboard.bin.gz");
+				if (file.exists()) {
+					play_keyboard = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(file))));
+					timestamp_kb_input = play_keyboard.readInt();
+				}
+				file = new File(replayDirectory + "/mouse.bin.gz");
+				if (file.exists()) {
+					play_mouse = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin.gz")))));
+					timestamp_mouse_input = play_mouse.readInt();
+				}
                 started_record_kb_mouse = true;
             } else {
                 started_record_kb_mouse = false;
