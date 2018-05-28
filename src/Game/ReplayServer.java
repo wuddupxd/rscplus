@@ -14,6 +14,7 @@ import Client.Logger;
 public class ReplayServer implements Runnable {
 	String playbackDirectory;
 	DataInputStream input = null;
+	FileInputStream file_input = null;
 	ServerSocketChannel sock = null;
 	SocketChannel client = null;
 	ByteBuffer readBuffer = null;
@@ -41,7 +42,8 @@ public class ReplayServer implements Runnable {
 		try {
 			File file = new File(playbackDirectory + "/in.bin.gz");
 			size = file.length();
-			input = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(file))));
+			file_input = new FileInputStream(file);
+			input = new DataInputStream(new BufferedInputStream(new GZIPInputStream(file_input)));
 			
 			Logger.Info("ReplayServer: Waiting for client...");
 			
@@ -94,7 +96,7 @@ public class ReplayServer implements Runnable {
 			int length = input.readInt();
 			ByteBuffer buffer = ByteBuffer.allocate(length);
 			input.read(buffer.array());
-			available = input.available();
+			available = file_input.available();
 			
 			long frame_timer = System.currentTimeMillis() + Replay.getFrameTimeSlice();
 			
