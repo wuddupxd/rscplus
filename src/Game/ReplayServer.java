@@ -47,6 +47,8 @@ public class ReplayServer implements Runnable {
 			
 			Logger.Info("ReplayServer: Waiting for client...");
 			
+			file_input.available();
+			
 			sock = ServerSocketChannel.open();
 			sock.bind(new InetSocketAddress(43594));
 			client = sock.accept();

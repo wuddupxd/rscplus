@@ -401,6 +401,11 @@ public class Replay {
             return false;
         }
     }
+	
+	public static void shutdown() {
+		closeReplayPlayback();
+		closeReplayRecording();
+	}
     
 	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
 		try {
@@ -410,6 +415,8 @@ public class Replay {
 			keyboard.writeInt(keycode);
 			keyboard.writeInt(modifier);
 		} catch (Exception e) {
+			e.printStackTrace();
+			shutdown();
 		}
 	}
 	
@@ -427,6 +434,8 @@ public class Replay {
 			mouse.writeBoolean(popupTrigger);
 			mouse.writeInt(button);
 		} catch (Exception e) {
+			e.printStackTrace();
+			shutdown();
 		}
 	}
 	
@@ -441,6 +450,8 @@ public class Replay {
 			input.writeInt(bytesread);
 			input.write(b, off, bytesread);
 		} catch (Exception e) {
+			e.printStackTrace();
+			shutdown();
 		}
 	}
 	
@@ -477,6 +488,8 @@ public class Replay {
 			output.writeInt(len);
 			output.write(b, off, len);
 		} catch (Exception e) {
+			e.printStackTrace();
+			shutdown();
 		}
 	}
 	
@@ -485,6 +498,8 @@ public class Replay {
 			try {
 				return play_keys.readInt();
 			} catch (Exception e) {
+				e.printStackTrace();
+				shutdown();
 				return key;
 			}
 		}
@@ -495,6 +510,8 @@ public class Replay {
 		try {
 			keys.writeInt(key); // data length
 		} catch (Exception e) {
+			e.printStackTrace();
+			shutdown();
 		}
 		
 		return key;
