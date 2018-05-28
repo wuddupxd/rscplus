@@ -13,11 +13,13 @@ public class ReplayServer implements Runnable {
 	String playbackDirectory;
 	DataInputStream input = null;
 	SocketChannel client = null;
+	ByteBuffer readBuffer = null;
 	
 	public boolean isDone = false;
 	
 	ReplayServer(String directory) {
 		playbackDirectory = directory;
+		readBuffer = ByteBuffer.allocate(1024);
 	}
 	
 	@Override
@@ -31,6 +33,7 @@ public class ReplayServer implements Runnable {
 			sock = ServerSocketChannel.open();
 			sock.bind(new InetSocketAddress(43594));
 			client = sock.accept();
+			client.configureBlocking(false);
 			
 			Logger.Info("ReplayServer: Starting playback");
 			
@@ -86,6 +89,11 @@ public class ReplayServer implements Runnable {
 				Thread.sleep(1);
 			}
 			
+			// Read from client, but don't do anything with the data
+			while (client.read(readBuffer) > 0) {
+				readBuffer.clear();
+			}
+						
 			int length = input.readInt();
 			ByteBuffer buffer = ByteBuffer.allocate(length);
 			input.read(buffer.array());
