@@ -43,6 +43,7 @@ public class Reflection {
 	public static Field characterWaypointY = null;
 	public static Field attackingPlayerIdx = null;
 	public static Field attackingNpcIdx = null;
+	public static Field lastMouseAction = null;
 	
 	public static Field maxInventory = null;
 	
@@ -108,6 +109,10 @@ public class Reflection {
 					Logger.Info("Found itemClick");
 				}
 			}
+			
+			// Game Applet
+			lastMouseAction = c.getSuperclass().getDeclaredField("sb");
+			lastMouseAction.setAccessible(true);
 			
 			// Region X and Region Y
 			c.getDeclaredField("Qg").setAccessible(true);

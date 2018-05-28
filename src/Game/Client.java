@@ -178,8 +178,6 @@ public class Client {
 	public static int selectedItem;
 	public static int selectedItemSlot;
 	
-	public static int lastMouseAction;
-	
 	/**
 	 * An array of Strings that stores text used in the client
 	 */
@@ -734,6 +732,14 @@ public class Client {
 		try {
 			Reflection.closeConnection.invoke(Client.instance, close, 31);
 		} catch (Exception e) {
+		}
+	}
+	
+	public static void setInactivityTimer(int val) {
+		try {
+			Reflection.lastMouseAction.set(Client.instance, val);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
