@@ -622,6 +622,7 @@ public class Renderer {
 			
 			Rectangle bounds = new Rectangle(width - 148, height - 36, 48, 16);
 			drawShadowText(g2, "-replay-", bounds.x + 48, bounds.y - 10, color_text, true);
+			
 			setAlpha(g2, 0.5f);
 			if (replayOption == 1 || Settings.RECORD_AUTOMATICALLY) {
 				g2.setColor(color_low);
@@ -640,7 +641,6 @@ public class Renderer {
 			// Handle replay record selection click
 			if (MouseHandler.x >= bounds.x && MouseHandler.x <= bounds.x + bounds.width && MouseHandler.y >= bounds.y && MouseHandler.y <= bounds.y + bounds.height
 					&& MouseHandler.mouseClicked) {
-				Client.resetLoginMessage();
 				Client.showRecordAlwaysDialogue = true;
 				
 				if (replayOption == 1) {
@@ -661,8 +661,6 @@ public class Renderer {
 			// Handle replay play selection click
 			if (MouseHandler.x >= bounds.x && MouseHandler.x <= bounds.x + bounds.width && MouseHandler.y >= bounds.y && MouseHandler.y <= bounds.y + bounds.height
 					&& MouseHandler.mouseClicked) {
-				Client.resetLoginMessage();
-				
 				if (replayOption == 2) {
 					replayOption = 0;
 				} else {
@@ -675,7 +673,7 @@ public class Renderer {
 						replayName = selection.getPath();
 						if (Replay.isValid(replayName)) {
 							replayOption = 2;
-							Client.setLoginMessage("Just press 'Ok' to play it :)", "Replay loaded");
+							Client.login();
 							Logger.Info("Replay selected: " + replayName);
 						} else {
 							JOptionPane.showMessageDialog(Game.getInstance().getApplet(), "The replay you selected is not valid.\n" +

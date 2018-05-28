@@ -23,6 +23,7 @@ package Game;
 
 import static org.fusesource.jansi.Ansi.ansi;
 import java.applet.Applet;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -230,10 +231,6 @@ public class Client {
 	 */
 	public static int version;
 	
-	public static boolean login_message_dirty = false;
-	public static String login_message_top = "";
-	public static String login_message_bottom = "Please enter your username and password";
-	
 	/**
 	 * Iterates through {@link #strings} array and checks if various conditions are met. Used for patching client text.
 	 */
@@ -280,11 +277,6 @@ public class Client {
 	public static void update() {
 		// FIXME: This is a hack from a rsc client update (so we can skip updating the client this time)
 		version = 235;
-		
-		if (login_message_dirty) {
-			setLoginMessage_hook(login_message_bottom, login_message_top);
-			login_message_dirty = false;
-		}
 		
 		Replay.update();
 		
@@ -727,16 +719,6 @@ public class Client {
 	 * @param line2 the top line of text
 	 */
 	public static void setLoginMessage(String line1, String line2) {
-		// Do nothing if lines are being set to what they already are
-		if (login_message_top.equals(line2) && login_message_bottom.equals(line1))
-			return;
-		
-		login_message_dirty = true;
-		login_message_top = line2;
-		login_message_bottom = line1;
-	}
-	
-	private static synchronized void setLoginMessage_hook(String line1, String line2) {
 		if (Reflection.setLoginText == null)
 			return;
 		
@@ -771,6 +753,16 @@ public class Client {
 			}
 		} catch (Exception e) {
 			
+		}
+	}
+	
+	public static void login() {
+		// FIXME: We login by creating a mouse event to click the button right now
+		if (Client.state == Client.STATE_LOGIN) {
+			MouseEvent event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, 400, 250, 1, false, MouseEvent.BUTTON1);
+			MouseHandler.listener_mouse.mousePressed(event);
+			event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, 400, 250, 1, false, MouseEvent.BUTTON1);
+			MouseHandler.listener_mouse.mouseReleased(event);
 		}
 	}
 	
