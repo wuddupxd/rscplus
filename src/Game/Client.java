@@ -33,8 +33,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.fusesource.jansi.AnsiConsole;
 import Client.KeybindSet;
+import Client.Launcher;
 import Client.Logger;
 import Client.NotificationsHandler;
 import Client.NotificationsHandler.NotifType;
@@ -190,6 +192,8 @@ public class Client {
 	private static float[] xpdrop_state = new float[18];
 	private static long updateTimer = 0;
 	
+	public static boolean showRecordAlwaysDialogue = false;
+	
 	/**
 	 * A boolean array that stores if the XP per hour should be shown for a given skill when hovering on the XP bar.
 	 * <p>
@@ -226,7 +230,7 @@ public class Client {
 	
 	public static boolean login_message_dirty = false;
 	public static String login_message_top = "";
-	public static String login_message_bottom = "";
+	public static String login_message_bottom = "Please enter your username and password";
 	
 	/**
 	 * Iterates through {@link #strings} array and checks if various conditions are met. Used for patching client text.
@@ -292,6 +296,28 @@ public class Client {
 		// Increment the replay timestamp
 		if (Replay.isRecording)
 			Replay.incrementTimestamp();
+		
+		if (Settings.RECORD_AUTOMATICALLY_FIRST_TIME && showRecordAlwaysDialogue) {
+			int response = JOptionPane.showConfirmDialog(Game.getInstance().getApplet(), "If you'd like, you can record your session every time you play by default.\n" +
+					"\n" +
+					"These recordings do not leave your computer unless you manually do it on purpose.\n" +
+					"They also take up negligible space. You could probably fit a 1 hour session on a floppy disk, depending on what you do.\n" +
+					"\n" +
+					"Recordings can be played back later, even offline, and capture the data the server sends and that you send the server.\n" +
+					"Your password is not in the capture.\n" +
+					"\n" +
+					"Would you like to record all your play sessions by default?\n" +
+					"\n" +
+					"NOTE: This option can be toggled in the Settings interface (ctrl-o by default) under the Replay tab.", "rscplus", JOptionPane.YES_NO_OPTION,
+					JOptionPane.INFORMATION_MESSAGE, Launcher.icon);
+			if (response == JOptionPane.YES_OPTION || response == JOptionPane.CLOSED_OPTION) {
+				Settings.RECORD_AUTOMATICALLY = true;
+			} else if (response == JOptionPane.NO_OPTION) {
+				Settings.RECORD_AUTOMATICALLY = false;
+			}
+			Settings.RECORD_AUTOMATICALLY_FIRST_TIME = false;
+			Settings.save();
+		}
 		
 		if (state == STATE_GAME) {
 			// Process XP drops
@@ -699,6 +725,10 @@ public class Client {
 	 * @param line2 the top line of text
 	 */
 	public static void setLoginMessage(String line1, String line2) {
+		// Do nothing if lines are being set to what they already are
+		if (login_message_top.equals(line2) && login_message_bottom.equals(line1))
+			return;
+		
 		login_message_dirty = true;
 		login_message_top = line2;
 		login_message_bottom = line1;
