@@ -134,6 +134,7 @@ public class Replay {
 		
 		Game.getInstance().getJConfig().changeWorld(Settings.WORLD);
 		resetFrameTimeSlice();
+		Client.closeConnection(true);
 		fpsPlayMultiplier = 1.0f;
 		replayServer.isDone = true;
 		isPlaying = false;

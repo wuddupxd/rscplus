@@ -727,6 +727,16 @@ public class Client {
 		}
 	}
 	
+	public static void closeConnection(boolean close) {
+		if (Reflection.closeConnection == null)
+			return;
+		
+		try {
+			Reflection.closeConnection.invoke(Client.instance, close, 31);
+		} catch (Exception e) {
+		}
+	}
+	
 	/**
 	 * Send over the instruction of sleep, if player has sleeping bag with them
 	 */
