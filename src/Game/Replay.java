@@ -402,9 +402,11 @@ public class Replay {
         }
     }
 	
-	public static void shutdown() {
+	public static void shutdown_error() {
 		closeReplayPlayback();
 		closeReplayRecording();
+		if (Client.state == Client.STATE_GAME)
+			Client.displayMessage("Recording has been stopped because of an error", Client.CHAT_QUEST);
 	}
     
 	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
@@ -416,7 +418,7 @@ public class Replay {
 			keyboard.writeInt(modifier);
 		} catch (Exception e) {
 			e.printStackTrace();
-			shutdown();
+			shutdown_error();
 		}
 	}
 	
@@ -435,7 +437,7 @@ public class Replay {
 			mouse.writeInt(button);
 		} catch (Exception e) {
 			e.printStackTrace();
-			shutdown();
+			shutdown_error();
 		}
 	}
 	
@@ -451,7 +453,7 @@ public class Replay {
 			input.write(b, off, bytesread);
 		} catch (Exception e) {
 			e.printStackTrace();
-			shutdown();
+			shutdown_error();
 		}
 	}
 	
@@ -489,7 +491,7 @@ public class Replay {
 			output.write(b, off, len);
 		} catch (Exception e) {
 			e.printStackTrace();
-			shutdown();
+			shutdown_error();
 		}
 	}
 	
@@ -499,7 +501,7 @@ public class Replay {
 				return play_keys.readInt();
 			} catch (Exception e) {
 				e.printStackTrace();
-				shutdown();
+				shutdown_error();
 				return key;
 			}
 		}
@@ -511,7 +513,7 @@ public class Replay {
 			keys.writeInt(key); // data length
 		} catch (Exception e) {
 			e.printStackTrace();
-			shutdown();
+			shutdown_error();
 		}
 		
 		return key;
