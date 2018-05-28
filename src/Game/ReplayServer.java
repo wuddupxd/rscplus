@@ -39,21 +39,20 @@ public class ReplayServer implements Runnable {
 			
 			isDone = false;
 			
-			for(;;) {
+			while (!isDone) {
 				if (!Replay.paused) {
 					if (!doTick()) {
-						client.close();
-						sock.close();
-						input.close();
-						Replay.resetFrameTimeSlice();
 						isDone = true;
-						Logger.Info("ReplayServer: Playback has finished");
-						return;
 					}
 				}
 				
 				Thread.sleep(1);
 			}
+			
+			client.close();
+			sock.close();
+			input.close();
+			Logger.Info("ReplayServer: Playback has finished");
 		} catch (Exception e) {
 			if (sock != null) {
 				try {

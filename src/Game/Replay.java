@@ -133,7 +133,9 @@ public class Replay {
 		}
 		
 		Game.getInstance().getJConfig().changeWorld(Settings.WORLD);
+		resetFrameTimeSlice();
 		fpsPlayMultiplier = 1.0f;
+		replayServer.isDone = true;
 		isPlaying = false;
 		Logger.Info("Replay playback stopped");
 	}
@@ -346,6 +348,9 @@ public class Replay {
 	public static boolean controlPlayback(String action) {
         if (isPlaying) {
             switch (action){
+			case "stop":
+				closeReplayPlayback();
+				break;
                 case "pause":
                     togglePause();
                     Client.displayMessage(paused ? "Playback paused." : "Playback unpaused.", Client.CHAT_QUEST);

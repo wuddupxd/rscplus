@@ -969,7 +969,8 @@ public class ConfigWindow {
 		// addKeybindSet(keybindPanel, "Toggle save login information", "toggle_save_login_info", KeyModifier.NONE, -1);
 		
         addKeybindCategory(keybindPanel, "Replay (only used while a recording is played back)");
-        addKeybindSet(keybindPanel, "Pause", "pause", KeyModifier.NONE, KeyEvent.VK_SPACE);
+		addKeybindSet(keybindPanel, "Stop", "stop", KeyModifier.CTRL, KeyEvent.VK_B);
+		addKeybindSet(keybindPanel, "Pause", "pause", KeyModifier.NONE, KeyEvent.VK_SPACE);
         addKeybindSet(keybindPanel, "Increase playback speed", "ff_plus", KeyModifier.CTRL, KeyEvent.VK_RIGHT);
         addKeybindSet(keybindPanel, "Decrease playback speed", "ff_minus", KeyModifier.CTRL, KeyEvent.VK_LEFT);
         addKeybindSet(keybindPanel, "Reset playback speed", "ff_reset", KeyModifier.CTRL, KeyEvent.VK_DOWN);

@@ -758,10 +758,12 @@ public class Client {
 	
 	public static void login() {
 		// FIXME: We login by creating a mouse event to click the button right now
+		// This doesn't work well
 		if (Client.state == Client.STATE_LOGIN) {
-			MouseEvent event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, 400, 250, 1, false, MouseEvent.BUTTON1);
+			long time = System.currentTimeMillis();
+			MouseEvent event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_PRESSED, time, 0, 408, 249, 1, false, MouseEvent.BUTTON1);
 			MouseHandler.listener_mouse.mousePressed(event);
-			event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, 400, 250, 1, false, MouseEvent.BUTTON1);
+			event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_RELEASED, time + 500, 0, 408, 249, 1, false, MouseEvent.BUTTON1);
 			MouseHandler.listener_mouse.mouseReleased(event);
 		}
 	}

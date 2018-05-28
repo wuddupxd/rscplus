@@ -971,14 +971,12 @@ public class Settings {
 			if (Client.state == Client.STATE_LOGIN)
 				Game.getInstance().getJConfig().changeWorld(5);
 			return true;
-        case "pause":
-            return Replay.controlPlayback("pause");
+		case "stop":
+		case "pause":
         case "ff_plus":
-            return Replay.controlPlayback("ff_plus");
         case "ff_minus":
-            return Replay.controlPlayback("ff_minus");
         case "ff_reset":
-            return Replay.controlPlayback("ff_reset");
+			return Replay.controlPlayback(commandName);
 		default:
 			Logger.Error("An unrecognized command was sent to processCommand: " + commandName);
 			break;
