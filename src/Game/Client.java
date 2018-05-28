@@ -138,6 +138,7 @@ public class Client {
 	
 	public static int login_screen;
 	public static String username_login;
+	public static int autologin_timeout;
 	
 	public static Object player_object;
 	public static String player_name = null;
@@ -772,6 +773,24 @@ public class Client {
 			}
 		} catch (Exception e) {
 			
+		}
+	}
+	
+	/**
+	 * Logs the user in
+	 * 
+	 * @param reconnecting - is user reconnecting
+	 * @param user
+	 * @param pass
+	 */
+	public static void login(boolean reconnecting, String user, String pass) {
+		if (Reflection.login == null)
+			return;
+		
+		try {
+			Client.autologin_timeout = 2;
+			Reflection.login.invoke(Client.instance, -12, pass, user, reconnecting);
+		} catch (Exception e) {
 		}
 	}
 	

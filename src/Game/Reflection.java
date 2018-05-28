@@ -59,6 +59,7 @@ public class Reflection {
 	public static Method setGameBounds = null;
 	public static Method setLoginText = null;
 	public static Method closeConnection = null;
+	public static Method login = null;
 	public static Method logout = null;
 	public static Method itemClick = null;
 	public static Method menuGen = null;
@@ -74,6 +75,7 @@ public class Reflection {
 	private static final String SETGAMEBOUNDS = "final void ua.a(int,int,int,int,byte)";
 	private static final String SETLOGINTEXT = "private final void client.b(byte,java.lang.String,java.lang.String)";
 	private static final String CLOSECONNECTION = "private final void client.a(boolean,int)";
+	private static final String LOGIN = "private final void client.a(int,java.lang.String,java.lang.String,boolean)";
 	private static final String LOGOUT = "private final void client.B(int)";
 	private static final String ITEMCLICK = "private final void client.b(boolean,int)";
 	private static final String MENUGEN = "final void wb.a(int,int,boolean,java.lang.String,java.lang.String)";
@@ -101,6 +103,9 @@ public class Reflection {
 				} else if (method.toGenericString().equals(CLOSECONNECTION)) {
 					closeConnection = method;
 					Logger.Info("Found closeConnection");
+				} else if (method.toGenericString().equals(LOGIN)) {
+					login = method;
+					Logger.Info("Found login");
 				} else if (method.toGenericString().equals(LOGOUT)) {
 					logout = method;
 					Logger.Info("Found logout");
@@ -278,6 +283,8 @@ public class Reflection {
 				setLoginText.setAccessible(true);
 			if (closeConnection != null)
 				closeConnection.setAccessible(true);
+			if (login != null)
+				login.setAccessible(true);
 			if (logout != null)
 				logout.setAccessible(true);
 			if (itemClick != null)
