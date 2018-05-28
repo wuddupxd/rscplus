@@ -376,6 +376,7 @@ public class Client {
 		twitch.disconnect();
 		
 		resetLoginMessage();
+		Replay.closeReplayPlayback();
 		adaptStrings();
 		player_name = null;
 	}
