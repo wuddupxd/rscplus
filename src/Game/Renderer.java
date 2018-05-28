@@ -673,7 +673,6 @@ public class Renderer {
 						replayName = selection.getPath();
 						if (Replay.isValid(replayName)) {
 							replayOption = 2;
-							Client.login();
 							Logger.Info("Replay selected: " + replayName);
 						} else {
 							JOptionPane.showMessageDialog(Game.getInstance().getApplet(), "The replay you selected is not valid.\n" +

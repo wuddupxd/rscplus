@@ -23,7 +23,6 @@ package Game;
 
 import static org.fusesource.jansi.Ansi.ansi;
 import java.applet.Applet;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -753,18 +752,6 @@ public class Client {
 			}
 		} catch (Exception e) {
 			
-		}
-	}
-	
-	public static void login() {
-		// FIXME: We login by creating a mouse event to click the button right now
-		// This doesn't work well
-		if (Client.state == Client.STATE_LOGIN) {
-			long time = System.currentTimeMillis();
-			MouseEvent event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_PRESSED, time, 0, 408, 249, 1, false, MouseEvent.BUTTON1);
-			MouseHandler.listener_mouse.mousePressed(event);
-			event = new MouseEvent(Game.getInstance().getApplet(), MouseEvent.MOUSE_RELEASED, time + 500, 0, 408, 249, 1, false, MouseEvent.BUTTON1);
-			MouseHandler.listener_mouse.mouseReleased(event);
 		}
 	}
 	
