@@ -102,6 +102,7 @@ public class ReplayServer implements Runnable {
 					Replay.incrementTimestamp();
 				}
 				
+				// Check if client is reconnecting to support reconnection in replays
 				SocketChannel client_new = sock.accept();
 				if (client_new != null) {
 					Logger.Info("ReplayServer: Client has reconnected");
