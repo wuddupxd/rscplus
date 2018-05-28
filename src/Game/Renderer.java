@@ -666,7 +666,7 @@ public class Renderer {
 				} else {
 					JFileChooser j = new JFileChooser(Settings.Dir.REPLAY);
 					j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-					int response = j.showDialog(Game.getInstance().getApplet(), "Select");
+					int response = j.showDialog(Game.getInstance().getApplet(), "Select Folder");
 					
 					File selection = j.getSelectedFile();
 					if (selection != null && response != JFileChooser.CANCEL_OPTION) {
