@@ -17,7 +17,7 @@ public class ReplayServer implements Runnable {
 	ByteBuffer readBuffer = null;
 	
 	public boolean isDone = false;
-	public int size = 0;
+	public long size = 0;
 	public long available = 0;
 	
 	ReplayServer(String directory) {
@@ -37,8 +37,9 @@ public class ReplayServer implements Runnable {
 	public void run() {
 		sock = null;
 		try {
-			input = new DataInputStream(new FileInputStream(new File(playbackDirectory + "/in.bin")));
-			size = input.available();
+			File file = new File(playbackDirectory + "/in.bin");
+			size = file.length();
+			input = new DataInputStream(new FileInputStream(file));
 			
 			Logger.Info("ReplayServer: Waiting for client...");
 			
