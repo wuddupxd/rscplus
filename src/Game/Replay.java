@@ -212,8 +212,12 @@ public class Replay {
 	
 	public static void update() {
 		// If the replay is done playing, disable replay mode
-		if (isPlaying && replayServer.isDone) {
-			closeReplayPlayback();
+		if (isPlaying) {
+			// Reset logout timer, we're not the ones playing
+			Client.lastMouseAction = 0;
+			
+			if (replayServer.isDone)
+				closeReplayPlayback();
 		}
 	}
 

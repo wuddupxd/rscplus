@@ -178,6 +178,8 @@ public class Client {
 	public static int selectedItem;
 	public static int selectedItemSlot;
 	
+	public static int lastMouseAction;
+	
 	/**
 	 * An array of Strings that stores text used in the client
 	 */

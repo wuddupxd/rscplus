@@ -207,6 +207,9 @@ public class JClassPatcher {
 			hookClassVariable(methodNode, "client", "bc", "I", "Game/Client", "planeIndex", "I", true, false);
 			hookClassVariable(methodNode, "client", "Ub", "Z", "Game/Client", "loadingArea", "Z", true, false);
 			
+			// Last mouse activity
+			hookClassVariable(methodNode, "client", "sb", "I", "Game/Client", "lastMouseAction", "I", true, true);
+			
 			// Client version
 			hookStaticVariable(methodNode, "fa", "d", "I", "Game/Client", "version", "I");
 			
