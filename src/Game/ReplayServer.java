@@ -88,15 +88,16 @@ public class ReplayServer implements Runnable {
 				Thread.sleep(1);
 			}
 			
-			// Read from client, but don't do anything with the data
-			while (client.read(readBuffer) > 0) {
-				readBuffer.clear();
-			}
-						
 			int length = input.readInt();
 			ByteBuffer buffer = ByteBuffer.allocate(length);
 			input.read(buffer.array());
 			client.write(buffer);
+			
+			// Read from client, but don't do anything with the data
+			while (client.read(readBuffer) > 0) {
+				readBuffer.clear();
+			}
+			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
