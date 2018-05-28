@@ -124,6 +124,8 @@ public class Game extends JFrame implements AppletStub, ComponentListener, Windo
 		}
 		if (Replay.isPlaying) {
 			title += "; Progress: " + Replay.getPercentPlayed() + "%" + ", Speed: " + new DecimalFormat("##.##").format(Replay.fpsPlayMultiplier) + "x";
+			if (Replay.paused)
+				title += ", Paused";
 		}
 		if (Replay.isRecording) {
 			title += "; Recording Replay";
