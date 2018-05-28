@@ -417,6 +417,9 @@ public class Replay {
 	}
     
 	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
+		if (keyboard == null)
+			return;
+		
 		try {
 			keyboard.writeInt(timestamp);
 			keyboard.writeByte(event);
@@ -430,6 +433,9 @@ public class Replay {
 	}
 	
 	public static void dumpMouseInput(byte event, int x, int y, int rotation, int modifier, int clickCount, int scrollType, int scrollAmount, boolean popupTrigger, int button) {
+		if (mouse == null)
+			return;
+		
 		try {
 			mouse.writeInt(timestamp);
 			mouse.writeByte(event);
