@@ -292,7 +292,7 @@ public class Client {
 			int response = JOptionPane.showConfirmDialog(Game.getInstance().getApplet(), "If you'd like, you can record your session every time you play by default.\n" +
 					"\n" +
 					"These recordings do not leave your computer unless you manually do it on purpose.\n" +
-					"They also take up negligible space. You could probably fit a 1 hour session on a floppy disk, depending on what you do.\n" +
+					"They also take up negligible space. You could fit about a 6 hour session on a floppy disk, depending on what you do.\n" +
 					"\n" +
 					"Recordings can be played back later, even offline, and capture the data the server sends and that you send the server.\n" +
 					"Your password is not in the capture.\n" +
