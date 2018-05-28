@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.zip.GZIPInputStream;
 import Client.Logger;
 
 public class ReplayServer implements Runnable {
@@ -38,9 +39,9 @@ public class ReplayServer implements Runnable {
 	public void run() {
 		sock = null;
 		try {
-			File file = new File(playbackDirectory + "/in.bin");
+			File file = new File(playbackDirectory + "/in.bin.gz");
 			size = file.length();
-			input = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+			input = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(file))));
 			
 			Logger.Info("ReplayServer: Waiting for client...");
 			
@@ -84,12 +85,12 @@ public class ReplayServer implements Runnable {
 	
 	public boolean doTick() {
 		try {
-			// We've reached the end of the replay
-			if (input.available() <= 2) {
-				return false;
-			}
-			
 			int timestamp_input = input.readInt();
+			
+			// We've reached the end of the replay
+			if (timestamp_input == -1)
+				return false;
+			
 			int length = input.readInt();
 			ByteBuffer buffer = ByteBuffer.allocate(length);
 			input.read(buffer.array());

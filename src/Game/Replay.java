@@ -34,6 +34,8 @@ import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import Client.Logger;
 import Client.Settings;
 import Client.Util;
@@ -91,8 +93,8 @@ public class Replay {
 		try {
 			play_keys = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin"))));
             if (Settings.RECORD_KB_MOUSE) {
-				play_keyboard = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin"))));
-				play_mouse = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin"))));
+				play_keyboard = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(new File(replayDirectory + "/keyboard.bin.gz")))));
+				play_mouse = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(new File(replayDirectory + "/mouse.bin.gz")))));
 				timestamp_kb_input = play_keyboard.readInt();
 				timestamp_mouse_input = play_mouse.readInt();
                 started_record_kb_mouse = true;
@@ -156,12 +158,12 @@ public class Replay {
 		Util.makeDirectory(recordingDirectory);
 		
 		try {
-			output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin"))));
-			input = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin"))));
+			output = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin.gz")))));
+			input = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin.gz")))));
 			keys = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin"))));
             if (Settings.RECORD_KB_MOUSE) {
-				keyboard = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin"))));
-				mouse = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/mouse.bin"))));
+				keyboard = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(new File(recordingDirectory + "/keyboard.bin.gz")))));
+				mouse = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(new File(recordingDirectory + "/mouse.bin.gz")))));
                 started_record_kb_mouse = true; //need this to know whether or not to close the file if the user changes settings mid-recording
             } else {
                 started_record_kb_mouse = false;
@@ -187,10 +189,16 @@ public class Replay {
 			return;
 		
 		try {
+			// Write EOF values
+			input.writeInt(-1);
+			output.writeInt(-1);
+			
 			output.close();
 			input.close();
 			keys.close();
             if (started_record_kb_mouse) {
+            	keyboard.writeInt(-1);
+            	mouse.writeInt(-1);
                 keyboard.close();
                 mouse.close();
             }
@@ -324,7 +332,7 @@ public class Replay {
 	}
 	
 	public static boolean isValid(String path) {
-		return (new File(path + "/in.bin").exists() && new File(path + "/keys.bin").exists());
+		return (new File(path + "/in.bin.gz").exists() && new File(path + "/keys.bin").exists());
 	}
 	
 	public static void resetFrameTimeSlice() {
