@@ -353,7 +353,7 @@ public class Replay {
                 case "ff_plus":
                 	if (paused)
                 		break;
-                    if (fpsPlayMultiplier < 32.0f) {
+                    if (fpsPlayMultiplier < 256.0f) {
                         fpsPlayMultiplier /= 0.5f;
                     }
 				updateFrameTimeSlice();
