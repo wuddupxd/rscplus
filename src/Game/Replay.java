@@ -84,6 +84,11 @@ public class Replay {
 	
 	public static void incrementTimestamp() {
 		timestamp++;
+		
+		// EOF is -1
+		if (timestamp == -1) {
+			timestamp = 0;
+		}
 	}
 	
 	public static void initializeReplayPlayback(String replayDirectory) {
