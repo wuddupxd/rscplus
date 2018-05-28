@@ -311,6 +311,10 @@ public class Client {
 		}
 		
 		if (state == STATE_GAME) {
+			if (Client.player_name == null) {
+				Client.getPlayerName();
+			}
+			
 			// Process XP drops
 			boolean dropXP = xpdrop_state[SKILL_HP] > 0.0f; // TODO: Declare dropXP outside of the update method
 			for (int i = 0; i < xpdrop_state.length; i++) {

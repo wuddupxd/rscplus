@@ -223,10 +223,6 @@ public class Renderer {
 					NPC npc = iterator.next(); // TODO: Remove unnecessary allocations
 					Color color = color_low;
 					
-					if (Client.player_name == null) {
-						Client.getPlayerName();
-					}
-					
 					// Update player coords
 					if (npc != null && Client.player_name.equals(npc.name)) {
 						Client.player_posX = npc.x;
@@ -374,10 +370,6 @@ public class Renderer {
 			
 			if (!Client.isSleeping()) {
 				Client.updateCurrentFatigue();
-			}
-			
-			if (!Client.isWelcomeScreen() && null == Client.player_name) {
-				Client.getPlayerName();
 			}
 			
 			// Clear item list for next frame
@@ -851,10 +843,6 @@ public class Renderer {
 	private static boolean isInCombatWithNPC(NPC npc) {
 		if (npc == null) {
 			return false;
-		}
-		
-		if (Client.player_name == null) {
-			Client.getPlayerName();
 		}
 		
 		int bottom_posY_npc = npc.y + npc.height;
