@@ -405,8 +405,10 @@ public class Replay {
 	public static void shutdown_error() {
 		closeReplayPlayback();
 		closeReplayRecording();
-		if (Client.state == Client.STATE_GAME)
+		if (Client.state == Client.STATE_GAME) {
 			Client.displayMessage("Recording has been stopped because of an error", Client.CHAT_QUEST);
+			Client.displayMessage("Please log back in to start recording again", Client.CHAT_QUEST);
+		}
 	}
     
 	public static void dumpKeyboardInput(int keycode, byte event, char keychar, int modifier) {
