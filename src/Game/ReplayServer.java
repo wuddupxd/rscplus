@@ -12,6 +12,7 @@ import Client.Logger;
 public class ReplayServer implements Runnable {
 	String playbackDirectory;
 	DataInputStream input = null;
+	ServerSocketChannel sock = null;
 	SocketChannel client = null;
 	ByteBuffer readBuffer = null;
 	
@@ -34,7 +35,7 @@ public class ReplayServer implements Runnable {
 	
 	@Override
 	public void run() {
-		ServerSocketChannel sock = null;
+		sock = null;
 		try {
 			input = new DataInputStream(new FileInputStream(new File(playbackDirectory + "/in.bin")));
 			size = input.available();
@@ -50,6 +51,7 @@ public class ReplayServer implements Runnable {
 			
 			isDone = false;
 			
+			sock.configureBlocking(false);
 			while (!isDone) {
 				if (!Replay.paused) {
 					if (!doTick()) {
@@ -86,6 +88,11 @@ public class ReplayServer implements Runnable {
 			}
 			
 			int timestamp_input = input.readInt();
+			int length = input.readInt();
+			ByteBuffer buffer = ByteBuffer.allocate(length);
+			input.read(buffer.array());
+			available = input.available();
+			
 			long frame_timer = System.currentTimeMillis() + Replay.getFrameTimeSlice();
 			
 			while (Replay.timestamp < timestamp_input) {
@@ -95,21 +102,24 @@ public class ReplayServer implements Runnable {
 					Replay.incrementTimestamp();
 				}
 				
+				SocketChannel client_new = sock.accept();
+				if (client_new != null) {
+					Logger.Info("ReplayServer: Client has reconnected");
+					client.close();
+					client = client_new;
+					client.configureBlocking(false);
+				}
+				
 				// Don't hammer the cpu
 				Thread.sleep(1);
 			}
-			
-			int length = input.readInt();
-			ByteBuffer buffer = ByteBuffer.allocate(length);
-			input.read(buffer.array());
-			client.write(buffer);
-			
-			available = input.available();
 			
 			// Read from client, but don't do anything with the data
 			while (client.read(readBuffer) > 0) {
 				readBuffer.clear();
 			}
+			
+			client.write(buffer);
 			
 			return true;
 		} catch (Exception e) {
