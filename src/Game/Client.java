@@ -404,10 +404,7 @@ public class Client {
 	
 	public static void disconnect_hook() {
 		// ::lostcon or closeConnection
-		if (Renderer.replayOption == 1)
-			Replay.closeReplayRecording();
-		else if (Renderer.replayOption == 2)
-			Replay.closeReplayPlayback();
+		Replay.closeReplayRecording();
 	}
 	
 	public static void resetLoginMessage() {
