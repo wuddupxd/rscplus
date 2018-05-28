@@ -405,7 +405,7 @@ public class JClassPatcher {
 				
 				LabelNode label = new LabelNode();
 				methodNode.instructions.insertBefore(findNode, new InsnNode(Opcodes.ICONST_0));
-				methodNode.instructions.insertBefore(findNode, new FieldInsnNode(Opcodes.GETSTATIC, "Game/Replay", "isPlaying", "Z"));
+				methodNode.instructions.insertBefore(findNode, new FieldInsnNode(Opcodes.GETSTATIC, "Game/Replay", "paused", "Z"));
 				methodNode.instructions.insertBefore(findNode, new JumpInsnNode(Opcodes.IFEQ, label));
 				methodNode.instructions.insertBefore(findNode, new InsnNode(Opcodes.RETURN));
 				methodNode.instructions.insertBefore(findNode, label);
