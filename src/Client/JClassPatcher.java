@@ -118,6 +118,10 @@ public class JClassPatcher {
 			hookClassVariable(methodNode, "ba", "rb", "[I", "Game/Renderer", "pixels", "[I", true, true);
 			
 			hookStaticVariable(methodNode, "ua", "h", "[Ljava/lang/String;", "Game/Client", "friends", "[Ljava/lang/String;");
+			hookStaticVariable(methodNode, "ac", "z", "[Ljava/lang/String;", "Game/Client", "friends_world", "[Ljava/lang/String;");
+			hookStaticVariable(methodNode, "cb", "c", "[Ljava/lang/String;", "Game/Client", "friends_formerly", "[Ljava/lang/String;");
+			hookStaticVariable(methodNode, "client", "Fj", "[I", "Game/Client", "friends_online", "[I");
+			
 			hookStaticVariable(methodNode, "n", "g", "I", "Game/Client", "friends_count", "I");
 			
 			hookClassVariable(methodNode, "client", "Wd", "I", "Game/Renderer", "width", "I", false, true);
@@ -346,8 +350,14 @@ public class JClassPatcher {
 		while (methodNodeList.hasNext()) {
 			MethodNode methodNode = methodNodeList.next();
 			
+			// handlePacket
+			if (methodNode.name.equals("a") && methodNode.desc.equals("(III)V")) {
+				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
+				AbstractInsnNode insnNode = insnNodeList.next();
+				methodNode.instructions.insertBefore(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Replay", "patchClient", "()V", false));
+			}
 			// I (I)V is where most of the interface is processed
-			if (methodNode.name.equals("I") && methodNode.desc.equals("(I)V")) {
+			else if (methodNode.name.equals("I") && methodNode.desc.equals("(I)V")) {
 				// Show combat menu
 				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
 				while (insnNodeList.hasNext()) {

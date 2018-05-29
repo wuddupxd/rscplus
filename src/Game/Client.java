@@ -130,6 +130,9 @@ public class Client {
 	
 	public static int friends_count;
 	public static String[] friends;
+	public static String[] friends_world;
+	public static String[] friends_formerly;
+	public static int[] friends_online;
 	
 	public static String pm_username;
 	public static String pm_text;

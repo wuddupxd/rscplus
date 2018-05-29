@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -591,5 +592,23 @@ public class Replay {
 		}
 		
 		return key;
+	}
+	
+	public static void patchClient() {
+		// This is called from the client to apply fixes specific to replay
+		// We only run this while playing replays
+		if(!isPlaying)
+			return;
+		
+		// The client doesn't remove friends during replay because they're removed client-side
+		// Instead, lets increase the array size so we can still see added friends and not crash the client
+		if (Client.friends_count == Client.friends.length) {
+			int newLength = Client.friends.length + 200;
+			Client.friends = Arrays.copyOf(Client.friends, newLength);
+			Client.friends_world = Arrays.copyOf(Client.friends_world, newLength);
+			Client.friends_formerly = Arrays.copyOf(Client.friends_formerly, newLength);
+			Client.friends_online = Arrays.copyOf(Client.friends_online, newLength);
+			Logger.Info("Replay.patchClient(): Applied friends list length patch to fix playback; newLength: " + newLength);
+		}
 	}
 }
