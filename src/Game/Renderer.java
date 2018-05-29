@@ -672,7 +672,7 @@ public class Renderer {
 						} else {
 							JOptionPane.showMessageDialog(Game.getInstance().getApplet(), "The replay folder you selected is not valid.\n" +
 									"\n" +
-									"You need to select a folder that contains the 'in.bin.gz' and 'keys.bin' for your replay.\n" +
+									"You need to select a folder that contains the 'version.bin', 'in.bin.gz', and 'keys.bin' for your replay.\n" +
 									"They're usually in a folder with your login username.", "rscplus", JOptionPane.ERROR_MESSAGE,
 									Launcher.icon_warn);
 						}

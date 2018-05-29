@@ -41,6 +41,9 @@ import Client.Settings;
 import Client.Util;
 
 public class Replay {
+	// If we ever change replays in a way that breaks backwards compatibility, we need to increment this
+	public static int VERSION = 0;
+	
 	static DataOutputStream output = null;
 	static DataOutputStream input = null;
 	static DataOutputStream keys = null;
@@ -79,6 +82,9 @@ public class Replay {
 	public static ReplayServer replayServer = null;
 	public static Thread replayThread = null;
 	
+	public static int replay_version;
+	public static int client_version;
+	
 	public static int timestamp;
 	public static int timestamp_kb_input;
 	public static int timestamp_mouse_input;
@@ -99,6 +105,13 @@ public class Replay {
 			Client.username_login = "Replay";
 		
 		try {
+			// We read in this information to adjust our replay method based on versioning
+			// No need to check if output matches until other revisions come out
+			DataInputStream version = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/version.bin"))));
+			replay_version = version.readInt();
+			client_version = version.readInt();
+			version.close();
+			
 			play_keys = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(replayDirectory + "/keys.bin"))));
             if (Settings.RECORD_KB_MOUSE) {
 				File file = new File(replayDirectory + "/keyboard.bin.gz");
@@ -129,7 +142,7 @@ public class Replay {
 		replayThread = new Thread(replayServer);
 		replayThread.start();
 		isPlaying = true;
-		Logger.Info("Replay playback started");
+		Logger.Info("Replay playback started; client v" + client_version + ", replay v" + replay_version);
 	}
 	
 	public static void closeReplayPlayback() {
@@ -173,6 +186,12 @@ public class Replay {
 		Util.makeDirectory(recordingDirectory);
 		
 		try {
+			// Write out version information
+			DataOutputStream version = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/version.bin"))));
+			version.writeInt(Replay.VERSION);
+			version.writeInt(Client.version);
+			version.close();
+			
 			output = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(new File(recordingDirectory + "/out.bin.gz")))));
 			input = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(new File(recordingDirectory + "/in.bin.gz")))));
 			keys = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(recordingDirectory + "/keys.bin"))));
@@ -347,7 +366,7 @@ public class Replay {
 	}
 	
 	public static boolean isValid(String path) {
-		return (new File(path + "/in.bin.gz").exists() && new File(path + "/keys.bin").exists());
+		return (new File(path + "/in.bin.gz").exists() && new File(path + "/keys.bin").exists() && new File(path + "/version.bin").exists());
 	}
 	
 	public static void resetFrameTimeSlice() {
