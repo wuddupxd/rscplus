@@ -117,12 +117,17 @@ public class JClassPatcher {
 			hookClassVariable(methodNode, "ba", "k", "I", "Game/Renderer", "height", "I", false, true);
 			hookClassVariable(methodNode, "ba", "rb", "[I", "Game/Renderer", "pixels", "[I", true, true);
 			
+			hookStaticVariable(methodNode, "n", "g", "I", "Game/Client", "friends_count", "I");
 			hookStaticVariable(methodNode, "ua", "h", "[Ljava/lang/String;", "Game/Client", "friends", "[Ljava/lang/String;");
 			hookStaticVariable(methodNode, "ac", "z", "[Ljava/lang/String;", "Game/Client", "friends_world", "[Ljava/lang/String;");
 			hookStaticVariable(methodNode, "cb", "c", "[Ljava/lang/String;", "Game/Client", "friends_formerly", "[Ljava/lang/String;");
 			hookStaticVariable(methodNode, "client", "Fj", "[I", "Game/Client", "friends_online", "[I");
 			
-			hookStaticVariable(methodNode, "n", "g", "I", "Game/Client", "friends_count", "I");
+			hookStaticVariable(methodNode, "db", "g", "I", "Game/Client", "ignores_count", "I");
+			hookStaticVariable(methodNode, "l", "c", "[Ljava/lang/String;", "Game/Client", "ignores", "[Ljava/lang/String;");
+			hookStaticVariable(methodNode, "ia", "g", "[Ljava/lang/String;", "Game/Client", "ignores_formerly", "[Ljava/lang/String;");
+			hookStaticVariable(methodNode, "ia", "a", "[Ljava/lang/String;", "Game/Client", "ignores_copy", "[Ljava/lang/String;");
+			hookStaticVariable(methodNode, "ua", "wb", "[Ljava/lang/String;", "Game/Client", "ignores_formerly_copy", "[Ljava/lang/String;");
 			
 			hookClassVariable(methodNode, "client", "Wd", "I", "Game/Renderer", "width", "I", false, true);
 			hookClassVariable(methodNode, "client", "Oi", "I", "Game/Renderer", "height_client", "I", false, true);

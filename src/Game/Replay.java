@@ -610,5 +610,16 @@ public class Replay {
 			Client.friends_online = Arrays.copyOf(Client.friends_online, newLength);
 			Logger.Info("Replay.patchClient(): Applied friends list length patch to fix playback; newLength: " + newLength);
 		}
+		
+		// The client doesn't remove ignores during replay because they're removed client-side
+		// Instead, lets increase the array size so we can still see added ignores and not crash the client
+		if (Client.ignores_count == Client.ignores.length) {
+			int newLength = Client.ignores.length + 100;
+			Client.ignores = Arrays.copyOf(Client.ignores, newLength);
+			Client.ignores_formerly = Arrays.copyOf(Client.ignores_formerly, newLength);
+			Client.ignores_copy = Arrays.copyOf(Client.ignores_copy, newLength);
+			Client.ignores_formerly_copy = Arrays.copyOf(Client.ignores_formerly_copy, newLength);
+			Logger.Info("Replay.patchClient(): Applied ignores list length patch to fix playback; newLength: " + newLength);
+		}
 	}
 }

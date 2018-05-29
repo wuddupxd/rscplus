@@ -134,6 +134,12 @@ public class Client {
 	public static String[] friends_formerly;
 	public static int[] friends_online;
 	
+	public static int ignores_count;
+	public static String[] ignores;
+	public static String[] ignores_formerly;
+	public static String[] ignores_copy;
+	public static String[] ignores_formerly_copy;
+	
 	public static String pm_username;
 	public static String pm_text;
 	public static String pm_enteredText;
