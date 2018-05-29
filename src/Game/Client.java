@@ -194,6 +194,7 @@ public class Client {
 	private static long updateTimer = 0;
 	
 	public static boolean showRecordAlwaysDialogue = false;
+    public static boolean showMacintoshReplayNotImplementedError = false;
 	
 	/**
 	 * A boolean array that stores if the XP per hour should be shown for a given skill when hovering on the XP bar.
@@ -310,6 +311,16 @@ public class Client {
 			Settings.RECORD_AUTOMATICALLY_FIRST_TIME = false;
 			Settings.save();
 		}
+        
+        if (showMacintoshReplayNotImplementedError) {
+            JOptionPane.showMessageDialog(Game.getInstance().getApplet(), "Sorry, but the ability to replay your recordings on Mac is not implemented yet.\n" +
+                    "\n" +
+                    "Recordings made on Mac are valid and good, but there's currently an error actually playing them back.\n" +
+                    "If you want to see your playback, unfortunately your options are to use rscplus on Windows, on Linux, or wait.\n"+
+                    "Hopefully a fix for this can be made soon, but in the meantime, feel free to keep making recordings.", "rscplus", JOptionPane.ERROR_MESSAGE,
+                    Launcher.icon_warn);
+            showMacintoshReplayNotImplementedError = false;
+        }
 		
 		if (state == STATE_GAME) {
 			if (Client.player_name == null) {
