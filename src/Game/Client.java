@@ -398,7 +398,8 @@ public class Client {
 	public static void login_hook() {
 		// Order of comparison matters here
 		if (Renderer.replayOption == 2) {
-			Replay.initializeReplayPlayback(Renderer.replayName);
+			if (!Replay.initializeReplayPlayback(Renderer.replayName))
+				Renderer.replayOption = 0;
 		} else if (Renderer.replayOption == 1 || Settings.RECORD_AUTOMATICALLY) {
 			Replay.initializeReplayRecording();
         }

@@ -667,8 +667,6 @@ public class Renderer {
 							replayOption = 2;
 							Logger.Info("Replay selected: " + replayName);
 							Client.login_hook();
-							// it doesn't matters credentials here
-							Client.login(false, "a", "a");
 						} else {
 							JOptionPane.showMessageDialog(Game.getInstance().getApplet(), "The replay folder you selected is not valid.\n" +
 									"\n" +
