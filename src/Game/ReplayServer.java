@@ -43,6 +43,7 @@ public class ReplayServer implements Runnable {
 	ByteBuffer readBuffer = null;
 	long frame_timer = 0;
 	
+	public boolean isReady = false;
 	public boolean isDone = false;
 	public long size = 0;
 	public long available = 0;
@@ -122,7 +123,15 @@ public class ReplayServer implements Runnable {
 				Replay.changePort(usePort);
 			}
 			sock.bind(new InetSocketAddress(usePort));
-			client = sock.accept();
+			
+			// Let's connect our client
+			Logger.Info("ReplayServer: Syncing playback to client...");
+			sock.configureBlocking(false);
+			while (client == null) {
+				client = sock.accept();
+				isReady = true;
+			}
+			sock.configureBlocking(true);
 			
 			Logger.Info("ReplayServer: Starting playback; port=" + usePort);
 			
@@ -154,6 +163,7 @@ public class ReplayServer implements Runnable {
 				}
 			}
 			
+			isReady = true;
 			e.printStackTrace();
 			Logger.Error("ReplayServer: Failed to serve replay");
 		}

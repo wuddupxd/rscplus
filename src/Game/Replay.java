@@ -189,7 +189,14 @@ public class Replay {
 			Client.strings[662] = "@bla@from:";
 		}
 		isPlaying = true;
-		try { Thread.sleep(1000); } catch (Exception e) {}
+		
+		// Wait
+		try {
+			while (!replayServer.isReady)
+				Thread.sleep(1);
+		} catch (Exception e) {
+		}
+		
 		Client.login(false, "Replay", "");
 		Logger.Info("Replay playback started; client v" + client_version + ", replay v" + replay_version);
 		return true;
