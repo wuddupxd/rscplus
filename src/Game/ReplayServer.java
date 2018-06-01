@@ -126,12 +126,8 @@ public class ReplayServer implements Runnable {
 			
 			// Let's connect our client
 			Logger.Info("ReplayServer: Syncing playback to client...");
-			sock.configureBlocking(false);
-			while (client == null) {
-				client = sock.accept();
-				isReady = true;
-			}
-			sock.configureBlocking(true);
+			isReady = true;
+			client = sock.accept();
 			
 			Logger.Info("ReplayServer: Starting playback; port=" + usePort);
 			
