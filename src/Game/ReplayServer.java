@@ -85,7 +85,7 @@ public class ReplayServer implements Runnable {
 			}
 			fileInput.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		
 		return timestamp_ret;
@@ -210,7 +210,7 @@ public class ReplayServer implements Runnable {
 			
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		
 		return false;
