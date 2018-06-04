@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 import Client.KeybindSet.KeyModifier;
-import Client.NotificationsHandler;
 import Game.Camera;
 import Game.Client;
 import Game.Game;
@@ -199,8 +198,6 @@ public class Settings {
 		Logger.Info("Jar Location: " + Dir.JAR);
 		
 		// Load other directories
-		Dir.CACHE = Dir.JAR + "/cache";
-		Util.makeDirectory(Dir.CACHE);
 		Dir.SCREENSHOT = Dir.JAR + "/screenshots";
 		Util.makeDirectory(Dir.SCREENSHOT);
 		Dir.REPLAY = Dir.JAR + "/replay";
@@ -907,7 +904,6 @@ public class Settings {
 	public static class Dir {
 		
 		public static String JAR;
-		public static String CACHE;
 		public static String DUMP;
 		public static String SCREENSHOT;
 		public static String REPLAY;
