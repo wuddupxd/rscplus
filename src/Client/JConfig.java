@@ -106,8 +106,6 @@ public class JConfig {
 				if (line.length() <= 0)
 					continue;
 				
-				System.out.println(line);
-				
 				String key = line.substring(0, line.indexOf('='));
 				
 				// Skip official client locale messages
