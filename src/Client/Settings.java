@@ -1030,6 +1030,7 @@ public class Settings {
 				Game.getInstance().getJConfig().changeWorld(5);
 			return true;
 		case "stop":
+		case "restart":
 		case "pause":
         case "ff_plus":
         case "ff_minus":
