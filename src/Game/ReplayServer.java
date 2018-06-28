@@ -210,21 +210,31 @@ public class ReplayServer implements Runnable {
 				return false;
 			
 			int length = input.readInt();
-			ByteBuffer buffer = ByteBuffer.allocate(length);
-			input.read(buffer.array());
-			available = file_input.available();
+			ByteBuffer buffer = null;
+			if (length > 0) {
+				buffer = ByteBuffer.allocate(length);
+				input.read(buffer.array());
+				available = file_input.available();
+			}
 			
-			int timestamp_diff = timestamp_input - Replay.timestamp;
-				
-			// If the timestamp is 400+ frames in the future, it's a client disconnection
-			// So we disconnect and reconnect the client
-			if (timestamp_diff > 400) {
-				Logger.Info("ReplayServer: Killing client connection; timestamp=" + Replay.timestamp + ", timestamp_diff=" + timestamp_diff);
+			if (Replay.replay_version >= 1) {
+				Logger.Info("ReplayServer: Killing client connection");
 				client.close();
+				Logger.Info("ReplayServer: Reconnecting client");
 				client = sock.accept();
-				timestamp_diff -= 400;
-				Replay.timestamp = timestamp_input - timestamp_diff;
-				Logger.Info("ReplayServer: Reconnected client; timestamp=" + Replay.timestamp);
+			} else {
+				int timestamp_diff = timestamp_input - Replay.timestamp;
+				
+				// If the timestamp is 400+ frames in the future, it's a client disconnection
+				// So we disconnect and reconnect the client
+				if (timestamp_diff > 400) {
+					Logger.Info("ReplayServer: Killing client connection; timestamp=" + Replay.timestamp + ", timestamp_diff=" + timestamp_diff);
+					client.close();
+					client = sock.accept();
+					timestamp_diff -= 400;
+					Replay.timestamp = timestamp_input - timestamp_diff;
+					Logger.Info("ReplayServer: Reconnected client; timestamp=" + Replay.timestamp);
+				}
 			}
 			
 			// Handle seeking
@@ -264,7 +274,8 @@ public class ReplayServer implements Runnable {
 			
 			// Write out replay data to the client
 			try {
-				client_write += client.write(buffer);
+				if (buffer != null)
+					client_write += client.write(buffer);
 			} catch (Exception e) {
 			}
 			

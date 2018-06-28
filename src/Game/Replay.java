@@ -45,7 +45,7 @@ import Client.Util;
 
 public class Replay {
 	// If we ever change replays in a way that breaks backwards compatibility, we need to increment this
-	public static int VERSION = 0;
+	public static int VERSION = 1;
 	
 	static DataOutputStream output = null;
 	static DataOutputStream input = null;
@@ -804,6 +804,18 @@ public class Replay {
 		}
 		
 		return key;
+	}
+	
+	public static void disconnect_hook() {
+		if (isRecording) {
+			try {
+				input.writeInt(timestamp);
+				// Packet length is 0, this will be a signal for disconnection
+				input.writeInt(0);
+			} catch (Exception e) {
+			}
+		}
+		Logger.Info("disconnected");
 	}
 	
 	public static void saveEncOpcode(int inopcode) {
