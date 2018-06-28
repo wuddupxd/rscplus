@@ -243,9 +243,6 @@ public class ReplayServer implements Runnable {
 			}
 			
 			// Handle seeking
-			if (timestamp_new != Replay.TIMESTAMP_EOF)
-				Replay.timestamp = timestamp_input;
-			
 			if (timestamp_new != Replay.TIMESTAMP_EOF) {
 				Replay.timestamp = timestamp_input;
 				if (Replay.timestamp >= timestamp_new) {
