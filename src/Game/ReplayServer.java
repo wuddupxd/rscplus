@@ -217,11 +217,15 @@ public class ReplayServer implements Runnable {
 				available = file_input.available();
 			}
 			
+			// Handle disconnects in replay playback
 			if (Replay.replay_version >= 1) {
-				Logger.Info("ReplayServer: Killing client connection");
-				client.close();
-				Logger.Info("ReplayServer: Reconnecting client");
-				client = sock.accept();
+				// If packet length is -1, it's a disconnection
+				if (length == -1) {
+					Logger.Info("ReplayServer: Killing client connection");
+					client.close();
+					Logger.Info("ReplayServer: Reconnecting client");
+					client = sock.accept();
+				}
 			} else {
 				int timestamp_diff = timestamp_input - Replay.timestamp;
 				

@@ -810,8 +810,8 @@ public class Replay {
 		if (isRecording) {
 			try {
 				input.writeInt(timestamp);
-				// Packet length is 0, this will be a signal for disconnection
-				input.writeInt(0);
+				// Packet length is -1, this will be a signal for disconnection
+				input.writeInt(-1);
 			} catch (Exception e) {
 			}
 		}
