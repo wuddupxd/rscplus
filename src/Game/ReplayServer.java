@@ -231,6 +231,7 @@ public class ReplayServer implements Runnable {
 				
 				// If the timestamp is 400+ frames in the future, it's a client disconnection
 				// So we disconnect and reconnect the client
+				// NOTE: Versions older than v1 have no disconnection indication
 				if (timestamp_diff > 400) {
 					Logger.Info("ReplayServer: Killing client connection; timestamp=" + Replay.timestamp + ", timestamp_diff=" + timestamp_diff);
 					client.close();
