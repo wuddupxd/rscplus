@@ -233,6 +233,9 @@ public class ReplayServer implements Runnable {
 					Logger.Info("ReplayServer: Reconnecting client");
 					client = sock.accept();
 					Logger.Info("ReplayServer: Client reconnected");
+					
+					// TODO: Have a settings option for a replay instant reconnect hack
+					// Replay.timestamp = timestamp_input;
 				}
 			} else {
 				int timestamp_diff = timestamp_input - Replay.timestamp;
