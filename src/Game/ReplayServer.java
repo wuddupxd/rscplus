@@ -220,7 +220,7 @@ public class ReplayServer implements Runnable {
 			}
 			
 			if (timestamp_input < Replay.timestamp) {
-				Logger.Warn("Replay file timestamp is behind current timestamp, skipping packet");
+				Logger.Warn("ReplayServer: Input timestamp is in the past, skipping packet");
 				return true;
 			}
 			
