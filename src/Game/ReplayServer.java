@@ -90,10 +90,12 @@ public class ReplayServer implements Runnable {
 				
 				// Skip data, we need to find the last timestamp
 				int length = fileInput.readInt();
-				int skipped = fileInput.skipBytes(length);
+				if (length > 0) {
+					int skipped = fileInput.skipBytes(length);
 				
-				if (skipped != length)
-					break;
+					if (skipped != length)
+						break;
+				}
 					
 				timestamp_ret = timestamp_input;
 			}
@@ -217,6 +219,11 @@ public class ReplayServer implements Runnable {
 				available = file_input.available();
 			}
 			
+			if (timestamp_input < Replay.timestamp) {
+				Logger.Warn("Replay file timestamp is behind current timestamp, skipping packet");
+				return true;
+			}
+			
 			// Handle disconnects in replay playback
 			if (Replay.replay_version >= 1) {
 				// If packet length is -1, it's a disconnection
@@ -225,6 +232,7 @@ public class ReplayServer implements Runnable {
 					client.close();
 					Logger.Info("ReplayServer: Reconnecting client");
 					client = sock.accept();
+					Logger.Info("ReplayServer: Client reconnected");
 				}
 			} else {
 				int timestamp_diff = timestamp_input - Replay.timestamp;
