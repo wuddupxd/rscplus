@@ -809,7 +809,7 @@ public class Replay {
 	public static void disconnect_hook() {
 		if (isRecording) {
 			try {
-				input.writeInt(timestamp);
+				input.writeInt(retained_timestamp);
 				// Packet length is -1, this will be a signal for disconnection
 				input.writeInt(-1);
 			} catch (Exception e) {
