@@ -713,11 +713,18 @@ public class Renderer {
 				// Trim text
 				cleanText = cleanText.trim();
 				
-				String name = cleanText.substring(0, cleanText.indexOf(':'));
-				String action = cleanText.substring(cleanText.indexOf(':') + 2);
+				Logger.Game(cleanText);
 				
-				if (!action.equals("Walk here") && !action.equals("Examine"))
-					drawShadowText(g2, action + ": " + name, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
+				indexOfSlash = cleanText.indexOf(':');
+				if (indexOfSlash != -1) {
+					String name = cleanText.substring(0, cleanText.indexOf(':'));
+					String action = cleanText.substring(cleanText.indexOf(':') + 2);
+				
+					if (!action.equals("Walk here") && !action.equals("Examine"))
+						drawShadowText(g2, action + ": " + name, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
+				} else {
+					drawShadowText(g2, cleanText, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
+				}
 			}
 		} else if (Client.state == Client.STATE_LOGIN) {
 			if (Settings.DEBUG.get(Settings.currentProfile))
