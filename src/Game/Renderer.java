@@ -731,8 +731,6 @@ public class Renderer {
 					extraBounds.height = 0;
 				bounds.width = Integer.max(bounds.width, extraOptionsOffsetX + extraBounds.width);
 				bounds.height += extraOptionsOffsetY + extraBounds.height;
-				Logger.Game("Extra: " + extraBounds.toString());
-				Logger.Game("Final: " + bounds.toString());
 				if (x + bounds.width > Renderer.width - 4)
 					x -= (x + bounds.width) - (Renderer.width - 4);
 				if (y + bounds.height > Renderer.height)
