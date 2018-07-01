@@ -688,7 +688,7 @@ public class Renderer {
             }
 			
 			// Mouseover hover handling
-			if (Client.is_hover) {
+			if (!Client.isInterfaceOpen() && !Client.show_questionmenu && Client.is_hover) {
 				int indexOfSlash = Client.mouseText.indexOf('/');
 				String cleanText = Client.mouseText;
 				
