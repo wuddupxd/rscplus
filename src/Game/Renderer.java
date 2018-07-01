@@ -25,6 +25,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -78,6 +79,7 @@ public class Renderer {
 	
 	public static ImageConsumer image_consumer = null;
 	
+	public static Color color_dynamic;
 	public static Color color_text = new Color(240, 240, 240);
 	public static Color color_shadow = new Color(15, 15, 15);
 	public static Color color_gray = new Color(60, 60, 60);
@@ -674,7 +676,7 @@ public class Renderer {
 				setAlpha(g2, 1.0f);
 			}
 			if (!(Replay.isPlaying && !Settings.TRIGGER_ALERTS_REPLAY.get(Settings.currentProfile))) {
-                g2.setFont(font_big);
+				g2.setFont(font_big);
                 if (Settings.FATIGUE_ALERT.get(Settings.currentProfile) && Client.getFatigue() >= 98 && !Client.isInterfaceOpen()) {
                     setAlpha(g2, alpha_time);
                     drawShadowText(g2, "FATIGUED", width / 2, height / 2, color_low, true);
@@ -685,6 +687,7 @@ public class Renderer {
                     drawShadowText(g2, "INVENTORY FULL", width / 2, height / 2, color_low, true);
                     setAlpha(g2, 1.0f);
                 }
+				g2.setFont(font_main);
             }
 			
 			// Mouseover hover handling
@@ -697,11 +700,15 @@ public class Renderer {
 				
 				// Strip Color out of message
 				int foundColor = -1;
+				int posColorStart = -1;
 				for(int i = 0; i < cleanText.length(); i++) {
 					if (cleanText.charAt(i) == '@')
 					{
 						if (foundColor == -1) {
 							foundColor = i;
+							if (posColorStart == -1) {
+								posColorStart = i;
+							}
 						} else {
 							cleanText = cleanText.substring(0, foundColor) + cleanText.substring(i + 1);
 							i -= i - foundColor;
@@ -709,6 +716,12 @@ public class Renderer {
 						}
 					}
 				}
+				
+				if (posColorStart != -1) {
+					color_dynamic = Renderer.colorFromCode(Client.mouseText.substring(posColorStart, posColorStart + 4));
+				}
+				
+				FontMetrics metrics = g2.getFontMetrics(font_main);
 				
 				// Trim text
 				cleanText = cleanText.trim();
@@ -719,8 +732,10 @@ public class Renderer {
 					String name = cleanText.substring(0, cleanText.indexOf(':'));
 					String action = cleanText.substring(cleanText.indexOf(':') + 2);
 				
-					if (!action.equals("Walk here") && !action.equals("Examine"))
-						drawShadowText(g2, action + ": " + name, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
+					if (!action.equals("Walk here") && !action.equals("Examine")) {
+						drawShadowText(g2, action + ": ", MouseHandler.x + 16, MouseHandler.y + 24, color_dynamic, false);
+						drawShadowText(g2, name, MouseHandler.x + 16 + metrics.stringWidth(action + ": "), MouseHandler.y + 24, color_text, false);
+					}
 				} else {
 					// Text is general
 					drawShadowText(g2, cleanText, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
@@ -1122,6 +1137,49 @@ public class Renderer {
 				inCombatCandidate &&
 				isOnLeftOfPlayer &&
 				hitboxesIntersectOnXAxis;
+	}
+	
+	private static Color colorFromCode(String s) {
+		int hexCode = 0xffffff;
+		
+		if (s.substring(1, 4).equalsIgnoreCase("red"))
+			hexCode = 0xff0000;
+		else if (s.substring(1, 4).equalsIgnoreCase("lre"))
+			hexCode = 0xff9040;
+		else if (s.substring(1, 4).equalsIgnoreCase("yel"))
+			hexCode = 0xffff00;
+		else if (s.substring(1, 4).equalsIgnoreCase("gre"))
+			hexCode = 65280;
+		else if (s.substring(1, 4).equalsIgnoreCase("blu"))
+			hexCode = 255;
+		else if (s.substring(1, 4).equalsIgnoreCase("cya"))
+			hexCode = 65535;
+		else if (s.substring(1, 4).equalsIgnoreCase("mag"))
+			hexCode = 0xff00ff;
+		else if (s.substring(1, 4).equalsIgnoreCase("whi"))
+			hexCode = 0xffffff;
+		else if (s.substring(1, 4).equalsIgnoreCase("bla"))
+			hexCode = 0;
+		else if (s.substring(1, 4).equalsIgnoreCase("dre"))
+			hexCode = 0xc00000;
+		else if (s.substring(1, 4).equalsIgnoreCase("ora"))
+			hexCode = 0xff9040;
+		else if (s.substring(1, 4).equalsIgnoreCase("ran"))
+			hexCode = (int)(Math.random() * 16777215D);
+		else if (s.substring(1, 4).equalsIgnoreCase("or1"))
+			hexCode = 0xffb000;
+		else if (s.substring(1, 4).equalsIgnoreCase("or2"))
+			hexCode = 0xff7000;
+		else if (s.substring(1, 4).equalsIgnoreCase("or3"))
+			hexCode = 0xff3000;
+		else if (s.substring(1, 4).equalsIgnoreCase("gr1"))
+			hexCode = 0xc0ff00;
+		else if (s.substring(1, 4).equalsIgnoreCase("gr2"))
+			hexCode = 0x80ff00;
+		else if (s.substring(1, 4).equalsIgnoreCase("gr3"))
+			hexCode = 0x40ff00;
+		
+		return new Color(hexCode);
 	}
 	
 	private static void drawNPCBar(Graphics2D g, int x, int y, NPC npc) {

@@ -432,6 +432,11 @@ public class JClassPatcher {
 			}
 			// I (I)V is where most of the interface is processed
 			if (methodNode.name.equals("I") && methodNode.desc.equals("(I)V")) {
+				AbstractInsnNode first = methodNode.instructions.getFirst();
+				
+				methodNode.instructions.insert(first, new FieldInsnNode(Opcodes.PUTSTATIC, "Game/Client", "is_hover", "Z"));
+				methodNode.instructions.insert(first, new InsnNode(Opcodes.ICONST_0));
+				
 				// Show combat menu
 				Iterator<AbstractInsnNode> insnNodeList = methodNode.instructions.iterator();
 				while (insnNodeList.hasNext()) {
