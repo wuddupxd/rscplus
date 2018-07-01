@@ -713,16 +713,16 @@ public class Renderer {
 				// Trim text
 				cleanText = cleanText.trim();
 				
-				Logger.Game(cleanText);
-				
 				indexOfSlash = cleanText.indexOf(':');
 				if (indexOfSlash != -1) {
+					// Text contained a ":", parse as name and action
 					String name = cleanText.substring(0, cleanText.indexOf(':'));
 					String action = cleanText.substring(cleanText.indexOf(':') + 2);
 				
 					if (!action.equals("Walk here") && !action.equals("Examine"))
 						drawShadowText(g2, action + ": " + name, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
 				} else {
+					// Text is general
 					drawShadowText(g2, cleanText, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
 				}
 			}
