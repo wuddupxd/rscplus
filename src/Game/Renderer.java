@@ -25,7 +25,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -692,54 +691,39 @@ public class Renderer {
 			
 			// Mouseover hover handling
 			if (!Client.isInterfaceOpen() && !Client.show_questionmenu && Client.is_hover) {
-				int indexOfSlash = Client.mouseText.indexOf('/');
 				String cleanText = Client.mouseText;
+				int indexExtraOptions = cleanText.indexOf('/');
 				
-				if (indexOfSlash != -1)
-					cleanText = cleanText.substring(0, indexOfSlash);
+				// Remove extra options text
+				if (indexExtraOptions != -1)
+					cleanText = cleanText.substring(0, indexExtraOptions).trim();
 				
-				// Strip Color out of message
-				int foundColor = -1;
-				int posColorStart = -1;
-				for(int i = 0; i < cleanText.length(); i++) {
-					if (cleanText.charAt(i) == '@')
-					{
-						if (foundColor == -1) {
-							foundColor = i;
-							if (posColorStart == -1) {
-								posColorStart = i;
-							}
-						} else {
-							cleanText = cleanText.substring(0, foundColor) + cleanText.substring(i + 1);
-							i -= i - foundColor;
-							foundColor = -1;
+				String colorlessText = cleanText;
+
+				// Remove color codes from string
+				for (int i = 0; i < colorlessText.length(); i++) {
+					if (colorlessText.charAt(i) == '@') {
+						try {
+							if (colorlessText.charAt(i + 4) == '@')
+								colorlessText = colorlessText.substring(0, i) + colorlessText.substring(i + 5);
+						} catch (Exception e) {
 						}
 					}
 				}
 				
-				if (posColorStart != -1) {
-					color_dynamic = Renderer.colorFromCode(Client.mouseText.substring(posColorStart, posColorStart + 4));
-				}
+				x = MouseHandler.x + 16;
+				y = MouseHandler.y + 28;
 				
-				FontMetrics metrics = g2.getFontMetrics(font_main);
+				// Dont allow text to go off the screen
+				Dimension bounds = getStringBounds(g2, colorlessText);
+				if (x + bounds.width > Renderer.width - 4)
+					x -= (x + bounds.width) - (Renderer.width - 4);
+				if (y + bounds.height > Renderer.height - 8)
+					y -= (y + bounds.height) - (Renderer.height - 8);
 				
-				// Trim text
-				cleanText = cleanText.trim();
-				
-				indexOfSlash = cleanText.indexOf(':');
-				if (indexOfSlash != -1) {
-					// Text contained a ":", parse as name and action
-					String name = cleanText.substring(0, cleanText.indexOf(':'));
-					String action = cleanText.substring(cleanText.indexOf(':') + 2);
-				
-					if (!action.equals("Walk here") && !action.equals("Examine")) {
-						drawShadowText(g2, action + ": ", MouseHandler.x + 16, MouseHandler.y + 24, color_dynamic, false);
-						drawShadowText(g2, name, MouseHandler.x + 16 + metrics.stringWidth(action + ": "), MouseHandler.y + 24, color_text, false);
-					}
-				} else {
-					// Text is general
-					drawShadowText(g2, cleanText, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
-				}
+				// Draw the final outcome
+				if (!colorlessText.endsWith("Walk here"))
+					drawColoredText(g2, cleanText, x, y);
 			}
 		} else if (Client.state == Client.STATE_LOGIN) {
 			if (Settings.DEBUG.get(Settings.currentProfile))
@@ -1058,6 +1042,50 @@ public class Renderer {
 		
 		g.setColor(textColor);
 		g.drawString(text, textX, textY);
+	}
+	
+	public static void drawColoredText(Graphics2D g, String text, int x, int y) {
+		int textX = x;
+		int textY = y;
+		
+		String outputText = "";
+		Color outputColor = colorFromCode("@yel@");
+		Color currentColor = outputColor;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '@' && text.charAt(i + 4) == '@') {
+				outputColor = colorFromCode(text.substring(i, i + 4));
+				i += 5;
+				if (i >= text.length())
+					break;
+			}
+			
+			if (currentColor != outputColor) {
+				if (outputText.length() > 0) {
+					g.setColor(color_shadow);
+					g.drawString(outputText, textX + 1, textY);
+					g.drawString(outputText, textX - 1, textY);
+					g.drawString(outputText, textX, textY + 1);
+					g.drawString(outputText, textX, textY - 1);
+					
+					g.setColor(currentColor);
+					g.drawString(outputText, textX, textY);
+					textX += getStringBounds(g, outputText).width;
+				}
+				currentColor = outputColor;
+				outputText = "";
+			}
+			
+			outputText += text.charAt(i);
+		}
+		
+		g.setColor(color_shadow);
+		g.drawString(outputText, textX + 1, textY);
+		g.drawString(outputText, textX - 1, textY);
+		g.drawString(outputText, textX, textY + 1);
+		g.drawString(outputText, textX, textY - 1);
+		
+		g.setColor(currentColor);
+		g.drawString(outputText, textX, textY);
 	}
 	
 	public static void drawShadowTextBorder(Graphics2D g, String text, int x, int y, Color textColor, float alpha, float boxAlpha, boolean border, int borderSize) {
