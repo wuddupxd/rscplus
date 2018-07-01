@@ -690,7 +690,7 @@ public class Renderer {
             }
 			
 			// Mouseover hover handling
-			if (!Client.isInterfaceOpen() && !Client.show_questionmenu && Client.is_hover) {
+			if (Settings.SHOW_MOUSE_TOOLTIP.get(Settings.currentProfile) && !Client.isInterfaceOpen() && !Client.show_questionmenu && Client.is_hover) {
 				String cleanText = Client.mouseText;
 				String extraOptions = "";
 				final int extraOptionsOffsetX = 8;

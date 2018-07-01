@@ -477,8 +477,12 @@ public class Client {
 	 * @param tooltipMessage - the message in raw color format
 	 */
 	public static String mouse_action_hook(String tooltipMessage) {
-		mouseText = tooltipMessage;
-		return "";
+		if (Settings.SHOW_MOUSE_TOOLTIP.get(Settings.currentProfile)) {
+			mouseText = tooltipMessage;
+			return "";
+		}
+		
+		return tooltipMessage;
 	}
 	
 	public static void resetLoginMessage() {
