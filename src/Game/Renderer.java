@@ -692,13 +692,16 @@ public class Renderer {
 			// Mouseover hover handling
 			if (!Client.isInterfaceOpen() && !Client.show_questionmenu && Client.is_hover) {
 				String cleanText = Client.mouseText;
+				String extraOptions = "";
+				final int extraOptionsOffsetX = 8;
+				final int extraOptionsOffsetY = 12;
 				int indexExtraOptions = cleanText.indexOf('/');
+				
+				String colorlessText = cleanText;
 				
 				// Remove extra options text
 				if (indexExtraOptions != -1)
 					cleanText = cleanText.substring(0, indexExtraOptions).trim();
-				
-				String colorlessText = cleanText;
 
 				// Remove color codes from string
 				for (int i = 0; i < colorlessText.length(); i++) {
@@ -711,19 +714,35 @@ public class Renderer {
 					}
 				}
 				
+				// Let's grab the extra options
+				indexExtraOptions = colorlessText.indexOf('/');
+				if (indexExtraOptions != -1) {
+					extraOptions = colorlessText.substring(indexExtraOptions + 1).trim();
+					colorlessText = colorlessText.substring(0, indexExtraOptions).trim();
+				}
+
 				x = MouseHandler.x + 16;
 				y = MouseHandler.y + 28;
 				
 				// Dont allow text to go off the screen
 				Dimension bounds = getStringBounds(g2, colorlessText);
+				Dimension extraBounds = getStringBounds(g2, extraOptions);
+				if (extraOptions.length() == 0)
+					extraBounds.height = 0;
+				bounds.width = Integer.max(bounds.width, extraOptionsOffsetX + extraBounds.width);
+				bounds.height += extraOptionsOffsetY + extraBounds.height;
+				Logger.Game("Extra: " + extraBounds.toString());
+				Logger.Game("Final: " + bounds.toString());
 				if (x + bounds.width > Renderer.width - 4)
 					x -= (x + bounds.width) - (Renderer.width - 4);
-				if (y + bounds.height > Renderer.height - 8)
-					y -= (y + bounds.height) - (Renderer.height - 8);
+				if (y + bounds.height > Renderer.height)
+					y -= (y + bounds.height) - (Renderer.height);
 				
 				// Draw the final outcome
-				if (!colorlessText.endsWith("Walk here"))
-					drawColoredText(g2, cleanText, x, y);
+				drawColoredText(g2, cleanText, x, y);
+				x += extraOptionsOffsetX;
+				y += extraOptionsOffsetY;
+				drawColoredText(g2, "@whi@" + extraOptions, x, y);
 			}
 		} else if (Client.state == Client.STATE_LOGIN) {
 			if (Settings.DEBUG.get(Settings.currentProfile))

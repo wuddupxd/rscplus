@@ -476,8 +476,9 @@ public class Client {
 	 * 
 	 * @param tooltipMessage - the message in raw color format
 	 */
-	public static void mouse_action_hook(String tooltipMessage) {
+	public static String mouse_action_hook(String tooltipMessage) {
 		mouseText = tooltipMessage;
+		return "";
 	}
 	
 	public static void resetLoginMessage() {

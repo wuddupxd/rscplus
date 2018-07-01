@@ -698,8 +698,9 @@ public class JClassPatcher {
 					if (insnNode.getOpcode() == Opcodes.GETFIELD) {
 						FieldInsnNode fieldNode = ((FieldInsnNode)insnNode);
 						if (fieldNode.owner.equals("client") && fieldNode.name.equals("li") && nextNode.getOpcode() == Opcodes.ALOAD && ((VarInsnNode)nextNode).var == 5) {
+							methodNode.instructions.insert(fieldNode, new VarInsnNode(Opcodes.ASTORE, 5));
 							methodNode.instructions.insert(fieldNode,
-									new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "mouse_action_hook", "(Ljava/lang/String;)V", false));
+									new MethodInsnNode(Opcodes.INVOKESTATIC, "Game/Client", "mouse_action_hook", "(Ljava/lang/String;)Ljava/lang/String;", false));
 							methodNode.instructions.insert(fieldNode, new VarInsnNode(Opcodes.ALOAD, 5));
 							methodNode.instructions.insert(fieldNode, new FieldInsnNode(Opcodes.PUTSTATIC, "Game/Client", "is_hover", "Z"));
 							methodNode.instructions.insert(fieldNode, new InsnNode(Opcodes.ICONST_1));
