@@ -157,6 +157,8 @@ public class Client {
 	public static String pm_enteredText;
 	public static String lastpm_username = null;
 	
+	public static String mouseText = "";
+	
 	public static int login_screen;
 	public static String username_login;
 	public static int autologin_timeout;
@@ -475,7 +477,7 @@ public class Client {
 	 * @param tooltipMessage - the message in raw color format
 	 */
 	public static void mouse_action_hook(String tooltipMessage) {
-		// reserved
+		mouseText = tooltipMessage;
 	}
 	
 	public static void resetLoginMessage() {

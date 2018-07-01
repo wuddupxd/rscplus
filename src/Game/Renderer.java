@@ -651,6 +651,8 @@ public class Renderer {
 				y += 16;
 				drawShadowText(g2, "Last sound effect: " + Client.lastSoundEffect, x, y, color_text, false);
 				y += 16;
+				drawShadowText(g2, "Mouse Text: " + Client.mouseText, x, y, color_text, false);
+				y += 16;
 				drawShadowText(g2, "Hover: " + Client.is_hover, x, y, color_text, false);
 			}
 			
@@ -684,6 +686,39 @@ public class Renderer {
                     setAlpha(g2, 1.0f);
                 }
             }
+			
+			// Mouseover hover handling
+			if (Client.is_hover) {
+				int indexOfSlash = Client.mouseText.indexOf('/');
+				String cleanText = Client.mouseText;
+				
+				if (indexOfSlash != -1)
+					cleanText = cleanText.substring(0, indexOfSlash);
+				
+				// Strip Color out of message
+				int foundColor = -1;
+				for(int i = 0; i < cleanText.length(); i++) {
+					if (cleanText.charAt(i) == '@')
+					{
+						if (foundColor == -1) {
+							foundColor = i;
+						} else {
+							cleanText = cleanText.substring(0, foundColor) + cleanText.substring(i + 1);
+							i -= i - foundColor;
+							foundColor = -1;
+						}
+					}
+				}
+				
+				// Trim text
+				cleanText = cleanText.trim();
+				
+				String name = cleanText.substring(0, cleanText.indexOf(':'));
+				String action = cleanText.substring(cleanText.indexOf(':') + 2);
+				
+				if (!action.equals("Walk here") && !action.equals("Examine"))
+					drawShadowText(g2, action + ": " + name, MouseHandler.x + 16, MouseHandler.y + 24, color_text, false);
+			}
 		} else if (Client.state == Client.STATE_LOGIN) {
 			if (Settings.DEBUG.get(Settings.currentProfile))
 				drawShadowText(g2, "DEBUG MODE", 38, 8, color_text, true);
