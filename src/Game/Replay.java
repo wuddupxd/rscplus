@@ -354,7 +354,7 @@ public class Replay {
                         new FileOutputStream(new File(recordingDirectory + "/mouse.bin.gz")))));
         started_record_kb_mouse =
             true; // need this to know whether or not to close the file if the user changes settings
-                  // mid-recording
+        // mid-recording
       } else {
         started_record_kb_mouse = false;
       }

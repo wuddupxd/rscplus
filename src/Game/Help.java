@@ -164,7 +164,7 @@ public class Help {
             Client.displayMessage("@whi@page does not exist", Client.CHAT_QUEST);
         }
       } else { // player specified a page number (argument 3) but misspelled "chats", "settings", or
-               // "misc"
+        // "misc"
         Client.displayMessage("@whi@Misspelled command", Client.CHAT_QUEST);
         help(0, "help");
       }

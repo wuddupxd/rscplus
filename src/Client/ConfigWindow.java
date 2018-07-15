@@ -1419,8 +1419,8 @@ public class ConfigWindow {
         addCheckbox("Show control buttons under the seek bar", replayPanel);
     replayPanelShowPlayerControlsCheckbox.setToolTipText(
         "Buttons you can click on to increase speed, decrease speed, restart, play/pause"); // TODO:
-                                                                                            // when
-                                                                                            // implemented, should turn seek bar on automatically
+    // when
+    // implemented, should turn seek bar on automatically
     replayPanelShowPlayerControlsCheckbox.setEnabled(
         false); // TODO remove this line when implemented
 

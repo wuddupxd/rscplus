@@ -643,7 +643,7 @@ public class NotificationsHandler {
               .replace(
                   "notify-send: ",
                   ""); // whereis is part of the util-linux package, which is included with pretty
-                       // much all linux systems.
+      // much all linux systems.
       if (whereis.length() < "/notify-send".length()) {
         Logger.Error(
             "!!! Please install notify-send for native notifications to work on Linux (or other systems with compatible binary) !!!");
